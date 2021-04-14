@@ -36,4 +36,10 @@ if __name__ == "__main__":
     downloadFiles.createEdge(goal, label="#Yolosec")
 
     style = renderer.loadStyle('style.json')
-    renderer.render(node=root, renderUnimplemented=True, style=style)
+    renderer.render(
+        node=root,
+        renderUnimplemented=True,
+        style=style,
+        fname="example_simpleS3",
+        fout="png"
+    )

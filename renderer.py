@@ -60,7 +60,7 @@ def loadStyle(path: str):
     
     return style
 
-def render(node: Node, renderUnimplemented=True, style={}):
+def render(node: Node, renderUnimplemented: bool =True, style: dict={}, fname: str="AttackTree", fout: str="png"):
     # Todo move this out to a config:
     
     dot = Digraph()
@@ -70,5 +70,5 @@ def render(node: Node, renderUnimplemented=True, style={}):
     dot.graph_attr['ranksep']="0.4"
 
     _buildDot(node, dot, dotformat=style, renderUnimplemented=renderUnimplemented) #recursive call
-    dot.format = 'png'
-    dot.render('AttackTree.gv', view=True)
+    dot.format = fout
+    dot.render(fname, view=True)

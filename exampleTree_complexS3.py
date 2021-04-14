@@ -67,4 +67,10 @@ if __name__ == "__main__":
     downloadFiles.createEdge(bucketACLs, label="Fail")
 
     style = renderer.loadStyle('style.json')
-    renderer.render(node=root, renderUnimplemented=True, style=style)
+    renderer.render(
+        node=root,
+        renderUnimplemented=True,
+        style=style,
+        fname="example_complexS3",
+        fout="png"
+    )
