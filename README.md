@@ -46,3 +46,4 @@ To run the attack tree with potential (but unimplemented) mitigations turned off
 ```
 renderer.render(node=root, renderUnimplemented=True, style=style)
 ```
+![PNG image showing graph created by exampleTree_complexS3.py](images/example_complexS3.png?raw=true "Complex S3")
