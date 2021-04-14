@@ -2,7 +2,7 @@
 This is a work in progress, a toy that I've been working on over the weekend. It's on GitHub just as a safe place to save it. It's in a public repo because it's not sensitive but I'm not encouraging anyone to use it :)
 
 ## Idea
-Programatically model trees like those described by [Kelly Shortridge](https://twitter.com/swagitda_) [here](https://swagitda.com/blog/posts/security-decision-trees-with-graphviz/)
+Programatically model trees like those described by [Kelly Shortridge](https://twitter.com/swagitda_), [here](https://swagitda.com/blog/posts/security-decision-trees-with-graphviz/)
 
 The goal is to decouple the model from the view. In reality I'm removing the need for the user to understand Graphviz and introducing a need for them to understand python.
 
