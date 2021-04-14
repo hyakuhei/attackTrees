@@ -70,4 +70,5 @@ def render(node: Node, renderUnimplemented=True, style={}):
     dot.graph_attr['ranksep']="0.4"
 
     _buildDot(node, dot, dotformat=style, renderUnimplemented=renderUnimplemented) #recursive call
+    dot.format = 'png'
     dot.render('AttackTree.gv', view=True)
