@@ -10,6 +10,9 @@ Models differentiate between controls that are *imlemented* and those that are n
 
 The `renderer.render()` function can toggle whether to include unimplemented things in it's graph.
 
+![PNG image showing graph created by exampleTree_simpleS3.py](images/example_simpleS3.png?raw=true "Simple S3")
+
+
 ## Prerequisites
 Your system needs an installed version of graphviz for rendering to work.
 On MacOS this can be installed using `brew install graphviz`
