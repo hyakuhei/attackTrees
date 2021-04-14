@@ -65,6 +65,7 @@ if __name__ == "__main__":
         pSuccess=1.0
     )
     downloadFiles.createEdge(bucketACLs, label="Fail")
+    awsPublicBucketSearch.createEdge(bucketACLs, label="Fail")
 
     style = renderer.loadStyle('style.json')
     renderer.render(

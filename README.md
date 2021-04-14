@@ -45,6 +45,18 @@ deactivate
 ## Methodology
 In messing with this idea, I've found the easiest approach is to map the existing paths out first, without consideration for things you might implement. To see what that looks like checkout [exampleTree_simpleS3.py](exampleTree_simpleS3.py). After this one can either create a new tree with potential mitigations _or_ add them to the existing tree, for examples purposes I chose the former; [exampleTree_complexS3.py](exampleTree_complexS3.py).
 
+## Node types
+There are serveral types of node [modelled](models.py), they're mostly self documenting.
+* Action: An attacker action expected to achieve some result
+* Detect: A detection, a node that represents our (security team) ability to detect that action
+* Block: Our ability to block that action
+* Discovery: Knowledge that an attacker gains through successful completion of an action.
+
+## Line types
+There are two types of line, solid and dashed (note, these can be changed in [style.json](style.json)). 
+* Solid: This path exists today
+* Dashed: This path represents what would happen if we implemented a control that is currently not implemented.
+
 The last line in each of those files is a call to render the tree:
 ```
     renderer.render(
