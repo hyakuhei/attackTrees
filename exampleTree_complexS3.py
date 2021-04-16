@@ -1,9 +1,7 @@
 from models import Action, Block, Detect, Discovery, Edge, Node
-import renderer
+from renderer import Renderer
 
-if __name__ == "__main__":
-    root = Node(label="Reality")
-    goal = Node(label="Attacker gets data from bucket")
+with Renderer(root = "Reality", goal= "Attacker gets data from bucket") as graph:
 
     apiCache = Action(
         label="Search API Caches",
@@ -13,7 +11,7 @@ if __name__ == "__main__":
         objective="Discover bucket paths",
         pSuccess=1.0
     )
-    
+
     siteMapsDisabled = Block(
         label="Sitemaps disabled",
         cost=0,
@@ -22,7 +20,7 @@ if __name__ == "__main__":
         implemented=False,
         pSuccess=1.0
     )
-    
+
     awsPublicBucketSearch = Action(
         label="AWS Public Bucket Search",
         chain="recon",
@@ -38,7 +36,7 @@ if __name__ == "__main__":
         sensitivity=3,
         value=0
     )
-    
+
     downloadFiles = Action(
         chain="exfiltration",
         label="Download files from all buckets",
@@ -48,7 +46,7 @@ if __name__ == "__main__":
         pSuccess=1.0,
         detections=["CloudWatch","DLP"]
     )
-    
+
     bucketACLs = Block(
         label="Buckets are private",
         cost=0,
@@ -58,19 +56,18 @@ if __name__ == "__main__":
         pSuccess=1.0
     )
 
-    root.connectTo(apiCache,label="#Yolosec") \
+    graph.root.connectTo(apiCache,label="#Yolosec") \
         .connectTo(siteMapsDisabled, label="Fail") \
         .connectTo(awsPublicBucketSearch, label="Next") \
         .connectTo(s3urls, label="Next") \
         .connectTo(downloadFiles, label="#Yolosec") \
-        .connectTo(goal,label="#Yolosec")
+        .connectTo(graph.goal,label="#Yolosec")
 
     apiCache.connectTo(s3urls, label="#Yolosec")
     downloadFiles.connectTo(bucketACLs, label="Fail")
     awsPublicBucketSearch.connectTo(bucketACLs, label="Fail")
 
-    renderer.render(
-        node=root,
+    graph.render(
         renderUnimplemented=True,
         fname="example_complexS3",
         fout="png"
