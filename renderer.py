@@ -68,6 +68,8 @@ def render(node: Node, renderUnimplemented: bool =True, style: dict={}, fname: s
     dot.graph_attr['splines']='True'
     dot.graph_attr['nodesep']="0.2"
     dot.graph_attr['ranksep']="0.4"
+    if len(style) == 0:
+        style = loadStyle("style.json")
 
     _buildDot(node, dot, dotformat=style, renderUnimplemented=renderUnimplemented) #recursive call
     dot.format = fout

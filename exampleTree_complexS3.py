@@ -13,8 +13,7 @@ if __name__ == "__main__":
         objective="Discover bucket paths",
         pSuccess=1.0
     )
-    root.createEdge(apiCache,label="#Yolosec")
-
+    
     siteMapsDisabled = Block(
         label="Sitemaps disabled",
         cost=0,
@@ -23,8 +22,7 @@ if __name__ == "__main__":
         implemented=False,
         pSuccess=1.0
     )
-    apiCache.createEdge(siteMapsDisabled, label="Fail")
-
+    
     awsPublicBucketSearch = Action(
         label="AWS Public Bucket Search",
         chain="recon",
@@ -33,7 +31,6 @@ if __name__ == "__main__":
         objective="Discover bucket paths",
         pSuccess=1.0
     )
-    siteMapsDisabled.createEdge(awsPublicBucketSearch, label="Next")
 
     s3urls = Discovery(
         label="S3 Urls",
@@ -41,9 +38,7 @@ if __name__ == "__main__":
         sensitivity=3,
         value=0
     )
-    apiCache.createEdge(s3urls, label="#Yolosec")
-    awsPublicBucketSearch.createEdge(s3urls, label="Next")
-
+    
     downloadFiles = Action(
         chain="exfiltration",
         label="Download files from all buckets",
@@ -53,9 +48,7 @@ if __name__ == "__main__":
         pSuccess=1.0,
         detections=["CloudWatch","DLP"]
     )
-    s3urls.createEdge(downloadFiles, label="#Yolosec")
-    downloadFiles.createEdge(goal, label="#Yolosec")
-
+    
     bucketACLs = Block(
         label="Buckets are private",
         cost=0,
@@ -64,14 +57,21 @@ if __name__ == "__main__":
         implemented=False,
         pSuccess=1.0
     )
-    downloadFiles.createEdge(bucketACLs, label="Fail")
-    awsPublicBucketSearch.createEdge(bucketACLs, label="Fail")
 
-    style = renderer.loadStyle('style.json')
+    root.connectTo(apiCache,label="#Yolosec") \
+        .connectTo(siteMapsDisabled, label="Fail") \
+        .connectTo(awsPublicBucketSearch, label="Next") \
+        .connectTo(s3urls, label="Next") \
+        .connectTo(downloadFiles, label="#Yolosec") \
+        .connectTo(goal,label="#Yolosec")
+
+    apiCache.connectTo(s3urls, label="#Yolosec")
+    downloadFiles.connectTo(bucketACLs, label="Fail")
+    awsPublicBucketSearch.connectTo(bucketACLs, label="Fail")
+
     renderer.render(
         node=root,
         renderUnimplemented=True,
-        style=style,
         fname="example_complexS3",
         fout="png"
     )
