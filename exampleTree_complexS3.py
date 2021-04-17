@@ -1,9 +1,7 @@
 from models import Action, Block, Detect, Discovery, Edge, Node
-import renderer
+from renderer import Renderer
 
-if __name__ == "__main__":
-    root = Node(label="Reality")
-    goal = Node(label="Attacker gets data from bucket")
+with Renderer(root = "Reality", goal= "Attacker gets data from bucket") as graph:
 
     apiCache = Action(
         label="Search API Caches",
@@ -13,7 +11,6 @@ if __name__ == "__main__":
         objective="Discover bucket paths",
         pSuccess=1.0
     )
-    root.createEdge(apiCache,label="#Yolosec")
 
     siteMapsDisabled = Block(
         label="Sitemaps disabled",
@@ -23,7 +20,6 @@ if __name__ == "__main__":
         implemented=False,
         pSuccess=1.0
     )
-    apiCache.createEdge(siteMapsDisabled, label="Fail")
 
     awsPublicBucketSearch = Action(
         label="AWS Public Bucket Search",
@@ -33,7 +29,6 @@ if __name__ == "__main__":
         objective="Discover bucket paths",
         pSuccess=1.0
     )
-    siteMapsDisabled.createEdge(awsPublicBucketSearch, label="Next")
 
     s3urls = Discovery(
         label="S3 Urls",
@@ -41,8 +36,6 @@ if __name__ == "__main__":
         sensitivity=3,
         value=0
     )
-    apiCache.createEdge(s3urls, label="#Yolosec")
-    awsPublicBucketSearch.createEdge(s3urls, label="Next")
 
     downloadFiles = Action(
         chain="exfiltration",
@@ -53,8 +46,6 @@ if __name__ == "__main__":
         pSuccess=1.0,
         detections=["CloudWatch","DLP"]
     )
-    s3urls.createEdge(downloadFiles, label="#Yolosec")
-    downloadFiles.createEdge(goal, label="#Yolosec")
 
     bucketACLs = Block(
         label="Buckets are private",
@@ -64,14 +55,20 @@ if __name__ == "__main__":
         implemented=False,
         pSuccess=1.0
     )
-    downloadFiles.createEdge(bucketACLs, label="Fail")
-    awsPublicBucketSearch.createEdge(bucketACLs, label="Fail")
 
-    style = renderer.loadStyle('style.json')
-    renderer.render(
-        node=root,
+    graph.root.connectTo(apiCache,label="#Yolosec") \
+        .connectTo(siteMapsDisabled, label="Fail") \
+        .connectTo(awsPublicBucketSearch, label="Next") \
+        .connectTo(s3urls, label="Next") \
+        .connectTo(downloadFiles, label="#Yolosec") \
+        .connectTo(graph.goal,label="#Yolosec")
+
+    apiCache.connectTo(s3urls, label="#Yolosec")
+    downloadFiles.connectTo(bucketACLs, label="Fail")
+    awsPublicBucketSearch.connectTo(bucketACLs, label="Fail")
+
+    graph.render(
         renderUnimplemented=True,
-        style=style,
         fname="example_complexS3",
         fout="png"
     )

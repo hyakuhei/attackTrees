@@ -10,10 +10,11 @@ class Node:
 
     #Backref means we don't actually create a real edge, we just maintain a list of backward references that we can draw in later. 
     #It's clunky but
-    def createEdge(self, endNode, label=""):
+    def connectTo(self, endNode, label=""):
         edge = Edge(endNode=endNode, label=label)
         edge.label = label
         self.edges.append(edge)
+        return endNode
 
     def getEdges(self):
         return self.edges
