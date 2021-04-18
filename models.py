@@ -1,5 +1,7 @@
 import uuid
 
+# Todo, introduce sentinel value 
+
 class Node:
     def __init__(self, label="Anonymous", metadata={}, nodeType=""):
         self.label = label
@@ -18,6 +20,32 @@ class Node:
 
     def getEdges(self):
         return self.edges
+
+    #shortcut to create a connected action
+    def action(self, label: str, edge_label: str="Next"): 
+        a = Action(label)
+        self.connectTo(a, edge_label)
+        return a
+
+    #shortcut to create a connected block
+    def block(self, label: str, implemented: bool, edge_label: str="Fail"):
+        b = Block(label, implemented=implemented)
+        self.connectTo(b, edge_label)
+        return b
+
+    #shortcut to create a connected detection
+    def detect(self, label: str, implemented: bool, edge_label: str="Detect"):
+        d = Detect(label, implemented=implemented)
+        self.connectTo(d, edge_label)
+        return d
+
+    #shortcut to create a connected discovery
+    def discovery(self, label: str, edge_label: str="Learn"):
+        d = Discovery(label)
+        self.connectTo(d, edge_label)
+        return d
+
+
 
     def __repr__(self):
         return f"[{self.label}]"
@@ -49,11 +77,11 @@ class Edge:
 class Action(Node):
     def __init__(self, 
                  label: str,
-                 chain: str,
-                 cost: int,
-                 time: int,
-                 objective: str,
-                 pSuccess: float,
+                 chain: str = "",
+                 cost: int = 0,
+                 time: int = 0,
+                 objective: str = "",
+                 pSuccess: float = 1.0,
                  detections: list = []):
         super().__init__(label=label, nodeType="Action")
         self.metadata = {}
@@ -67,12 +95,12 @@ class Action(Node):
 class Detect(Node):
     def __init__(self,
                  label: str,
-                 cost: int,
-                 description: str,
-                 complexity: int,
-                 latency: int,
                  implemented: bool,
-                 pSuccess: float):
+                 cost: int = 0,
+                 description: str = "",
+                 complexity: int = 0,
+                 latency: int = 0,
+                 pSuccess: float = 1.0):
         super().__init__(label=label, nodeType="Detect")
         self.metadata = {}
         self.metadata['cost'] = cost
@@ -86,11 +114,11 @@ class Detect(Node):
 class Block(Node):
     def __init__(self,
                  label: str,
-                 cost: int,
-                 description: str,
-                 complexity: int,
                  implemented: bool,
-                 pSuccess: float):
+                 cost: int = 0,
+                 description: str = "",
+                 complexity: int = 0,
+                 pSuccess: float = 1.0):
         super().__init__(label=label, nodeType="Block")
         self.metadata = {}
         self.metadata['cost'] = cost
@@ -106,7 +134,12 @@ class Block(Node):
 # value: 'Perceived monetary value if applicable'
 # markings: 'Any specific markings for the data, like PII, SPI, HIPPA etc'
 class Discovery(Node):
-    def __init__(self, label: str, description: str, sensitivity: int, value: int, markings: list = []):
+    def __init__(self,
+                 label: str,
+                 description: str = "",
+                 sensitivity: int = 0,
+                 value: int = 0,
+                 markings: list = []):
         super().__init__(label=label)
         self.metadata={}
         self.metadata['description'] = description

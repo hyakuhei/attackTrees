@@ -12,10 +12,11 @@ class Renderer(object):
 
     def __enter__(self):
         self.root = Node(label=self.rootLabel)
-        self.goal = Node(label=self.rootLabel)
+        self.goal = Node(label=self.goalLabel)
         return self
 
-    def __exit__(self):
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        # TODO: Handle this correctly.
         return self
  
     # A recursive function that walks the node tree
@@ -74,9 +75,8 @@ class Renderer(object):
         
         return style
 
-    def render(self, renderUnimplemented: bool =True, style: dict={}, fname: str="AttackTree", fout: str="png"):
+    def render(self, renderUnimplemented: bool=True, style: dict={}, fname: str="AttackTree", fout: str="png"):
         # Todo move this out to a config:
-        
         dot = Digraph()
         dot.graph_attr['overlap']='false'
         dot.graph_attr['splines']='True'

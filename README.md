@@ -45,6 +45,8 @@ deactivate
 ## Methodology
 In messing with this idea, I've found the easiest approach is to map the existing paths out first, without consideration for things you might implement. To see what that looks like checkout [exampleTree_simpleS3.py](exampleTree_simpleS3.py). After this one can either create a new tree with potential mitigations _or_ add them to the existing tree, for examples purposes I chose the former; [exampleTree_complexS3.py](exampleTree_complexS3.py).
 
+See [Methodology.md](Methodology.md) for more thoughts on how this might work in practice.
+
 ## Node types
 There are serveral types of node [modelled](models.py), they're mostly self documenting.
 * Action: An attacker action expected to achieve some result
