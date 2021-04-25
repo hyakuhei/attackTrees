@@ -16,8 +16,7 @@ class Renderer(object):
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
-        # TODO: Handle this correctly.
-        return self
+        return None
  
     # A recursive function that walks the node tree
     # And creates a graph for turning into graphviz
