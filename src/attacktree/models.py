@@ -45,8 +45,6 @@ class Node:
         self.connectTo(d, edge_label)
         return d
 
-
-
     def __repr__(self):
         return f"[{self.label}]"
 

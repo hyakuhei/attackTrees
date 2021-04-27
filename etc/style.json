@@ -1,0 +1,48 @@
+{
+    "Node":{
+        "color":"#c0c2c0",
+        "shape":"plaintext",
+        "style":"filled, rounded",
+        "fontname":"Lato",
+        "margin":"0.2"
+    },
+    "Action":{
+        "color":"#f55b5b",
+        "shape":"plaintext",
+        "style":"filled, rounded",
+        "fontname":"Lato",
+        "margin":"0.2"
+    },
+    "Discovery":{
+        "color":"#f7e08b",
+        "shape":"plaintext",
+        "style":"filled, rounded",
+        "fontname":"Lato",
+        "margin":"0.2"
+    },
+    "Detect":{
+        "color":"#ff7df0",
+        "shape":"plaintext",
+        "style":"filled, rounded",
+        "fontname":"Lato",
+        "margin":"0.2"
+    },
+    "Block":{
+        "color":"#b77dff",
+        "shape":"plaintext",
+        "style":"filled, rounded",
+        "fontname":"Lato",
+        "margin":"0.2"
+    },
+    "_unimplemented_override":{
+        "style":"filled"
+    },
+    "Edge":{
+        "fontname":"Lato",
+        "color":"#1f1f1f"
+    },
+    "_unimplemented_edge":{
+        "color":"#919191",
+        "style":"dashed"
+    }
+}
