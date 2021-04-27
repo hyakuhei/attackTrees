@@ -1,1 +1,1 @@
-recursive-include etc/ *.json
+include etc/stlye.json
