@@ -1,1 +1,1 @@
-include etc/stlye.json
+include conf/*.json

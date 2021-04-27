@@ -84,7 +84,7 @@ class Renderer(object):
  
         if len(style) == 0: #TODO: Make this a better check
             with resources.open_text("attacktree", "style.json") as fid:
-                style = json.loads(fid)
+                style = json.load(fid)
 
         self._buildDot(self.root, dot, dotformat=style, renderUnimplemented=renderUnimplemented) #recursive call
         dot.format = fout
