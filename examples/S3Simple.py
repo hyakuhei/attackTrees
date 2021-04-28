@@ -1,10 +1,8 @@
-from models import Action, Block, Detect, Discovery, Edge, Node
-import renderer
+from attacktree.models import Action, Block, Detect, Discovery, Edge, Node
+from attacktree.renderer import Renderer
 
-if __name__ == "__main__":
-    root = Node(label="Reality")
-    goal = Node(label="Attacker gets data from bucket")
-
+with Renderer(root = "Reality", goal= "Attacker gets data from bucket") as graph:
+    
     apiCache = Action(
         label="Search API Caches",
         chain="recon",
@@ -13,7 +11,7 @@ if __name__ == "__main__":
         objective="Discover bucket paths",
         pSuccess=1.0
     )
-    root.createEdge(apiCache,label="#Yolosec")
+    graph.root.connectTo(apiCache, label="#Yolosec")
 
     s3urls = Discovery(
         label="S3 Urls",
