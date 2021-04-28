@@ -1,1 +1,1 @@
-include conf/*.json
+include attacktree/style.json

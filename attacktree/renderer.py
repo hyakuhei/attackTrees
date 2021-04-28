@@ -9,6 +9,7 @@ class Renderer(object):
     def __init__(self, root="Root", goal="Goal"):
         self.rootLabel = root
         self.goalLabel = goal
+        self.renderOnExit = True
 
     def __enter__(self):
         self.root = Node(label=self.rootLabel)
@@ -16,6 +17,8 @@ class Renderer(object):
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
+        if self.renderOnExit == True:
+            self.render()
         return None
  
     # A recursive function that walks the node tree
@@ -74,8 +77,9 @@ class Renderer(object):
         
         return style
 
-    def render(self, renderUnimplemented: bool=True, style: dict={}, fname: str="AttackTree", fout: str="png"):
+    def render(self, renderUnimplemented: bool=True, style: dict={}, fname: str="AttackTree", fout: str="png", renderOnExit=False):
         # TODO: move this out to a config:
+        self.renderOnExit = renderOnExit
         dot = Digraph()
         dot.graph_attr['overlap']='false'
         dot.graph_attr['splines']='True'
