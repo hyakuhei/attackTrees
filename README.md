@@ -12,38 +12,34 @@ The `renderer.render()` function can toggle whether to include unimplemented thi
 
 ![PNG image showing graph created by exampleTree_simpleS3.py](images/example_simpleS3.png?raw=true "Simple S3")
 
-
-## Prerequisites
+# Prerequisites for Installation or Development 
 Your system needs an installed version of graphviz for rendering to work.
 On MacOS this can be installed using `brew install graphviz`
 
 See https://graphviz.org/download/ for other options.
 
-## Instructions for setup
+# Installation
+attacktree is available in PyPI, we recommend installing in a virtualenv
 ```
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
-deactivate
+pip install attacktree
 ```
 
 ## Instructions for running
-`exampleTree_simpleS3.py` is a simple model, containing only the current path. It can be run simply:
+`S3Simple.py` is a simple model, containing only a single path in some hypothetical S3 threat model. It can be run simply:
 ```
-source .venv/bin/activate
-python3 exampleTree_simpleS3.py
-deactivate
+python3 examples/S3Simple.py
 ```
 
-`exampleTree_complexS3.py` contains some potential blocking mitigations, things the security team might be considering but hasn't implemented.
+`S3Complex.py` contains some potential blocking mitigations, things the security team might be considering but hasn't implemented yet.
 ```
-source .venv/bin/activate
-python3 exampleTree_complexS3.py
-deactivate
+python3 examples/S3Complex.py
 ```
+
 
 ## Methodology
-In messing with this idea, I've found the easiest approach is to map the existing paths out first, without consideration for things you might implement. To see what that looks like checkout [exampleTree_simpleS3.py](exampleTree_simpleS3.py). After this one can either create a new tree with potential mitigations _or_ add them to the existing tree, for examples purposes I chose the former; [exampleTree_complexS3.py](exampleTree_complexS3.py).
+In messing with this idea, I've found the easiest approach is to map the existing paths out first, without consideration for things you might implement. To see what that looks like checkout [examples/S3Simple.py](eexamples/S3Simple.py). After this one can either create a new tree with potential mitigations _or_ add them to the existing tree, for examples purposes I chose the former; [examples/S3Complex.py](examples/S3Complex.py).
 
 See [Methodology.md](Methodology.md) for more thoughts on how this might work in practice.
 
@@ -72,7 +68,17 @@ The last line in each of those files is a call to render the tree:
 
 I imagine that in general usage, we'd just want one model for a specific attacker; not a _simple and a _complex_ one. However, it's very useful to be able to see what those different graphs look like, as the latter models things we _could_ do but are currently *unimplemented* - for that reason the `render()` function has a parameter to enable or disable rendering of unimplemented paths. This way you can record everything in one tree (and maybe add that into version control, as a system of record) and render different outputs, one that shows your current reality, and one that shows your potential reality (hopefully improved).
 
-Below is the output of running the _complex example with `renderUnimplemented=True`, note that if you set this to `False` the generated graph looks the same as `exampleTree_simpleS3.py`
+Below is the output of running the _complex example with `renderUnimplemented=True`, note that if you set this to `False` the generated graph looks the same as `examples/S3Simple.py.py`
 
-![PNG image showing graph created by exampleTree_complexS3.py](images/example_complexS3.png?raw=true "Complex S3")
+![PNG image showing graph created by examples/S3Complex.py](images/example_complexS3.png?raw=true "Complex S3")
  
+
+# Development
+
+## Instructions for setup
+```
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+deactivate
+```

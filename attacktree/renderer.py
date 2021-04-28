@@ -1,14 +1,15 @@
 import json
-
 from graphviz import Digraph
+from attacktree.models import Action, Block, Detect, Discovery, Edge, Node
 
-from models import Action, Block, Detect, Discovery, Edge, Node
+from importlib import resources
 
 class Renderer(object):
 
     def __init__(self, root="Root", goal="Goal"):
         self.rootLabel = root
         self.goalLabel = goal
+        self.renderOnExit = True
 
     def __enter__(self):
         self.root = Node(label=self.rootLabel)
@@ -16,6 +17,8 @@ class Renderer(object):
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
+        if self.renderOnExit == True:
+            self.render()
         return None
  
     # A recursive function that walks the node tree
@@ -68,21 +71,24 @@ class Renderer(object):
                 self._buildDot(node=edge.endNode, dot=dot, renderUnimplemented=renderUnimplemented, mappedEdges=mappedEdges, dotformat=dotformat) #recurse
 
     def loadStyle(self, path: str):
-        # TODO: Decide if we want error handling, probably not for now.
+        # TODO: Do error handling
         with open(path) as json_file:
             style = json.load(json_file)
         
         return style
 
-    def render(self, renderUnimplemented: bool=True, style: dict={}, fname: str="AttackTree", fout: str="png"):
-        # Todo move this out to a config:
+    def render(self, renderUnimplemented: bool=True, style: dict={}, fname: str="AttackTree", fout: str="png", renderOnExit=False):
+        # TODO: move this out to a config:
+        self.renderOnExit = renderOnExit
         dot = Digraph()
         dot.graph_attr['overlap']='false'
         dot.graph_attr['splines']='True'
         dot.graph_attr['nodesep']="0.2"
         dot.graph_attr['ranksep']="0.4"
-        if len(style) == 0:
-            style = self.loadStyle("style.json")
+ 
+        if len(style) == 0: #TODO: Make this a better check
+            with resources.open_text("attacktree", "style.json") as fid:
+                style = json.load(fid)
 
         self._buildDot(self.root, dot, dotformat=style, renderUnimplemented=renderUnimplemented) #recursive call
         dot.format = fout

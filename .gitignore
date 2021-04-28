@@ -1,1 +1,8 @@
 private
+.DS_Store
+.venv
+attacktree.egg-info
+attacktree/.DS_Store
+attacktree/__pycache__/
+build
+dist
