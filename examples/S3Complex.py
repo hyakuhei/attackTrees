@@ -1,4 +1,4 @@
-from attacktree.models import Action, Block, Detect, Discovery, Edge, Node
+from attacktree.models import Action, Block, Detect, Discovery
 from attacktree.renderer import Renderer
 
 with Renderer(root = "Reality", goal= "Attacker gets data from bucket") as graph:

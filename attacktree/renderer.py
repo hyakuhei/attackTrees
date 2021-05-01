@@ -1,19 +1,19 @@
 import json
 from graphviz import Digraph
-from attacktree.models import Action, Block, Detect, Discovery, Edge, Node
+from attacktree.models import Action, Block, Detect, Discovery, Edge, Root, Goal, Node
 
 from importlib import resources
+import logging
 
 class Renderer(object):
-
     def __init__(self, root="Root", goal="Goal"):
         self.rootLabel = root
         self.goalLabel = goal
         self.renderOnExit = True
 
     def __enter__(self):
-        self.root = Node(label=self.rootLabel)
-        self.goal = Node(label=self.goalLabel)
+        self.root = Root(label=self.rootLabel)
+        self.goal = Goal(label=self.goalLabel)
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
@@ -37,7 +37,7 @@ class Renderer(object):
             node_attr = dotformat[node.__class__.__name__]
             # Overload the default formatting shape if the Node is flagged as unimplemented
             if unimplemented:
-                node_attr = node_attr | dotformat['_unimplemented_override']
+                node_attr = node_attr | dotformat['_unimplemented_override'] # Style the unimplemented node
 
             dot.node(node.uniq, node.label, **node_attr)
         else:
@@ -63,7 +63,7 @@ class Renderer(object):
 
             # Override style for unimplemented edge
             if edgeImplemented == False:
-                edge_attr = edge_attr | dotformat['_unimplemented_edge']
+                edge_attr = edge_attr | dotformat['_unimplemented_edge'] # style the unimplemented edge
 
             if f"{node.uniq}:{edge.endNode.uniq}" not in mappedEdges:
                 dot.edge(node.uniq, edge.endNode.uniq, label=edge.label, **edge_attr)
@@ -83,12 +83,12 @@ class Renderer(object):
 
         if self.root is None:
             # No graph to render
-            print("Error: No graph to render")
+            logging.error("No graph to render")
             return
         
         # TODO: move this out to a config:
         
-        self.renderOnExit = renderOnExit
+        self.renderOnExit = renderOnExit # In case render is called multiple times, e.g jupyter 
         dot = Digraph()
         dot.graph_attr['overlap']='false'
         dot.graph_attr['splines']='True'
