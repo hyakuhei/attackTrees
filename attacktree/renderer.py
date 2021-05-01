@@ -77,8 +77,17 @@ class Renderer(object):
         
         return style
 
-    def render(self, renderUnimplemented: bool=True, style: dict={}, fname: str="AttackTree", fout: str="png", renderOnExit=False):
+    def render(self, root: Node=None, renderUnimplemented: bool=True, style: dict={}, fname: str="attacktree-graph", fout: str="png", renderOnExit=False):
+        if root is not None:
+            self.root = root
+
+        if self.root is None:
+            # No graph to render
+            print("Error: No graph to render")
+            return
+        
         # TODO: move this out to a config:
+        
         self.renderOnExit = renderOnExit
         dot = Digraph()
         dot.graph_attr['overlap']='false'
