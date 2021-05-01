@@ -1,11 +1,10 @@
 import uuid
 
-# Todo, introduce sentinel value 
+# TODO: introduce sentinel value 
 
 class Node:
-    def __init__(self, label="Anonymous", metadata={}, nodeType=""):
+    def __init__(self, label="Anonymous", metadata={}):
         self.label = label
-        self.nodeType = nodeType
         self.uniq = uuid.uuid4().hex
         self.edges = []
         self.metadata = {}
@@ -66,6 +65,18 @@ class Edge:
     def __repr__(self):
         return f"---{self.label}-->"
 
+class Root(Node):
+    def __init__(self,
+                 label: str):
+        super().__init__(label=label)
+        self.metadata = {}
+
+class Goal(Node):
+    def __init__(self,
+                 label: str):
+        super().__init__(label=label)
+        self.metadata = {}   
+
 # label: 'The name of the node',
 # chain: 'The stage of the Mitre Att&ck chain represented, e.g "recon"'
 # cost: 'Estimate of any material cost to this path, in dollars, does not include time'
@@ -81,7 +92,7 @@ class Action(Node):
                  objective: str = "",
                  pSuccess: float = 1.0,
                  detections: list = []):
-        super().__init__(label=label, nodeType="Action")
+        super().__init__(label=label)
         self.metadata = {}
         self.metadata['chain'] = chain
         self.metadata['cost'] = cost
@@ -99,7 +110,7 @@ class Detect(Node):
                  complexity: int = 0,
                  latency: int = 0,
                  pSuccess: float = 1.0):
-        super().__init__(label=label, nodeType="Detect")
+        super().__init__(label=label)
         self.metadata = {}
         self.metadata['cost'] = cost
         self.metadata['description'] = description
@@ -117,7 +128,7 @@ class Block(Node):
                  description: str = "",
                  complexity: int = 0,
                  pSuccess: float = 1.0):
-        super().__init__(label=label, nodeType="Block")
+        super().__init__(label=label)
         self.metadata = {}
         self.metadata['cost'] = cost
         self.metadata['description'] = description
