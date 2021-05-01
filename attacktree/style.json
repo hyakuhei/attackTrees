@@ -6,16 +6,30 @@
         "fontname":"Lato",
         "margin":"0.2"
     },
+    "Root":{
+        "color":"#03fc9d",
+        "shape":"box",
+        "style":"filled, rounded",
+        "fontname":"Lato",
+        "margin":"0.2"
+    },
+    "Goal":{
+        "color":"#03fc9d",
+        "shape":"box",
+        "style":"filled, rounded",
+        "fontname":"Lato",
+        "margin":"0.2"
+    },
     "Action":{
-        "color":"#f55b5b",
+        "color":"#ff5c5c",
         "shape":"plaintext",
         "style":"filled, rounded",
         "fontname":"Lato",
         "margin":"0.2"
     },
     "Discovery":{
-        "color":"#f7e08b",
-        "shape":"plaintext",
+        "color":"#ffdc5c",
+        "shape":"box",
         "style":"filled, rounded",
         "fontname":"Lato",
         "margin":"0.2"
@@ -28,7 +42,7 @@
         "margin":"0.2"
     },
     "Block":{
-        "color":"#b77dff",
+        "color":"#5cc1ff",
         "shape":"plaintext",
         "style":"filled, rounded",
         "fontname":"Lato",
