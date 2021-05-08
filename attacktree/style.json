@@ -49,7 +49,8 @@
         "margin":"0.2"
     },
     "_unimplemented_override":{
-        "style":"filled"
+        "style":"filled",
+        "color":"#b0c1cf"
     },
     "Edge":{
         "fontname":"Lato",

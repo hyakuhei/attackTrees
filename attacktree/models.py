@@ -1,20 +1,92 @@
 import uuid
 
-# TODO: introduce sentinel value 
+# TODO: introduce sentinel value UNSET to replace None where the user simply hasn't given a value yet
+# When a value is set to "None" - That shoud have meaning i.e:
+#   detections = None means that there are no detections, not that the user just hasn't set them yet.
 
-class Node:
+# TODO: Replace metadata with class values
+
+defaultEdgeLabels={
+    'Action':'Next',
+    'Discovery':'Learn',
+    'Block':'Fail',
+    'Detect':'Detect'
+}
+
+rules = {
+    'pSuccess':{
+        'math':"multiply",
+        'startWith':100,
+        'unit':"probability",
+        'formatString':"{}",
+        'description':"pSuccess: int value between 0 and 1 that describes the probability of an `Action` or `Block` being effective within the given time"
+    },
+    "attackCost":{
+        'math':"add",
+        'startWith':0,
+        'unit':"dollars",
+        'formatString':"${}",
+        'description':"cost: estimate of the number of dollars required to be invested to effectively run an `Action` or `Block`"
+    },
+    "time":{
+        'math':"add",
+        'startWith':0,
+        'unit':"hours",
+        'formatString':"{}h",
+        'description':"time: estimate of how long this `Action` or `Block` will take to be effective"
+    },
+    "defenceCost":{
+        'math':"add",
+        'startWith':0,
+        'unit':"dollars",
+        'formatString':"${}",
+        'description':"Cost of defensive controls"
+    }
+}
+
+mitreAttack = {
+    'recon':{
+        'shortName': "recon",
+        'friendlyName': "Reconnaissance",
+        'objective': "The adversary is trying to gather information they can use to plan future operations",
+        'url': "https://attack.mitre.org/tactics/TA0043/"
+    },
+    'resourceDev':{
+        'shortName': "resourceDev",
+        'friendlyName': "Resource Development",
+        'objective': "The adversary is trying to establish resources they can use to support operations.",
+        'url': "https://attack.mitre.org/tactics/TA0042/"
+    },
+    'credStuffing':{
+        'shortName': "credStuffing",
+        'friendlyName': "Credential Stuffing",
+        'objective': "Adversaries may use credentials obtained from breach dumps of unrelated accounts to gain access to target accounts through credential overlap.",
+        'url': "https://attack.mitre.org/techniques/T1110/004/"
+    },
+    'execution':{
+        'shortName': "execution",
+        'friendlyName': "Execution",
+        'objective': "The adversary is trying to run malicious code.",
+        'url': "https://attack.mitre.org/tactics/TA0002/"
+    }
+}
+
+
+class Node(object):
     def __init__(self, label="Anonymous", metadata={}):
         self.label = label
-        self.uniq = uuid.uuid4().hex
+        self.uniq = uuid.uuid4().hex #TODO: Remove this it's not needed, it's kinda here to make rendering work
         self.edges = []
         self.metadata = {}
+        self.parentEdges = [] # backref
 
     #Backref means we don't actually create a real edge, we just maintain a list of backward references that we can draw in later. 
     #It's clunky but
     def connectTo(self, endNode, label=""):
-        edge = Edge(endNode=endNode, label=label)
-        edge.label = label
+        edge = Edge(parentNode=self, endNode=endNode, label=label)
+        
         self.edges.append(edge)
+        endNode.parentEdges.append(edge)
         return endNode
 
     def getEdges(self):
@@ -25,6 +97,21 @@ class Node:
         a = Action(label)
         self.connectTo(a, edge_label)
         return a
+
+    # add (might replace connectTo)
+    # add an action, provide a default edge_label and return the action
+    # Makes writing models and declaring detailed actions easier
+
+    # TODO: I had to drop type-hinting because the Node class can't resolve itself
+    def add(self, node, edge_label: str=None):
+        if edge_label == None:
+            if node.__class__.__name__ in defaultEdgeLabels:
+                edge_label = defaultEdgeLabels[node.__class__.__name__]
+            else:
+                edge_label = ""
+
+        self.connectTo(node, edge_label)
+        return node
 
     #shortcut to create a connected block
     def block(self, label: str, implemented: bool, edge_label: str="Fail"):
@@ -45,25 +132,32 @@ class Node:
         return d
 
     def __repr__(self):
-        return f"[{self.label}]"
+        return f"{self.__class__.__name__}:{id(self)}"
 
 class Edge:
     endNode = None
     label = ""
     metadata = None
 
-    def __init__(self, endNode, label, metadata={}):
+    #todo: refactor endNode to childNode
+    def __init__(self, parentNode, endNode, label, metadata={}, pSuccess=-1):
+        self.parentNode = parentNode
         self.endNode = endNode
-        self.label = label
+        self.pSuccess = pSuccess
         self.metadata = metadata
+        self.label = label
+        self.evaluated = False
 
     # Edge types:
     # Succeeds Undetected
     # Succeeds Detected
     # Fails Undetected
-    # Fails Detected
+    
+    def describe(self):
+        return f"Edge '{self.label}' connects '{self.parentNode.label}' to '{self.endNode.label}'"
+
     def __repr__(self):
-        return f"---{self.label}-->"
+        return describe()
 
 class Root(Node):
     def __init__(self,
@@ -86,11 +180,11 @@ class Goal(Node):
 class Action(Node):
     def __init__(self, 
                  label: str,
-                 chain: str = "",
+                 chain: dict = None,
                  cost: int = 0,
                  time: int = 0,
                  objective: str = "",
-                 pSuccess: float = 1.0,
+                 pSuccess: int = 100,
                  detections: list = []):
         super().__init__(label=label)
         self.metadata = {}
@@ -109,7 +203,7 @@ class Detect(Node):
                  description: str = "",
                  complexity: int = 0,
                  latency: int = 0,
-                 pSuccess: float = 1.0):
+                 pSuccess: int = 100):
         super().__init__(label=label)
         self.metadata = {}
         self.metadata['cost'] = cost
@@ -127,15 +221,39 @@ class Block(Node):
                  cost: int = 0,
                  description: str = "",
                  complexity: int = 0,
-                 pSuccess: float = 1.0):
+                 pDefend: int = 100):
         super().__init__(label=label)
         self.metadata = {}
         self.metadata['cost'] = cost
         self.metadata['description'] = description
         self.metadata['complexity'] = complexity
         self.metadata['implemented'] = implemented
-        self.metadata['pSuccess'] = pSuccess
+        self.metadata['pDefend'] = pDefend
         self.edges = []
+    
+    def insertBetween(self, a: Node, b: Node):
+        # When two nodes are connected, insert a blocking node between them, replacing or updating the existing connection.
+        # Add 'block' to a -> b
+
+        #New rule. All Blocks are _inline_
+        # a -> b becomes a-> block -> b
+
+
+        # See if this block will work 100% (so it severes the connection) or partial, meaning we need to re-balance 
+        # Connect A to the new block
+        a.connectTo(self)
+
+        # Blocks are always inline, so remove the a -> b edge
+        for edge in a.edges:
+            if edge.endNode == b:
+                a.edges.remove(edge)
+        else:
+            self.connectTo(b)
+
+            # a.metadata['pSuccess'] == the probability of the technique working
+            # block.metadata['pDefend'] == the probability of the techniuqe being subsequently blocked
+            # edge.pSuccess is the probability of progressing
+
 
 # label: 'The name of the node'
 # description: 'A description of the data/information 

@@ -18,7 +18,7 @@ with Renderer(root = "Reality", goal= "Attacker gets data from bucket") as graph
         description="Ensure sitemaps are disabled",
         complexity=1,
         implemented=False,
-        pSuccess=1.0
+        pDefend=1.0
     )
 
     awsPublicBucketSearch = Action(
@@ -53,7 +53,7 @@ with Renderer(root = "Reality", goal= "Attacker gets data from bucket") as graph
         description="All S3 buckets are set to private",
         complexity=0,
         implemented=False,
-        pSuccess=1.0
+        pDefend=1.0
     )
 
     graph.root.connectTo(apiCache,label="#Yolosec") \
