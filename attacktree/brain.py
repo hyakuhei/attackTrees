@@ -58,8 +58,6 @@ class Brain(object):
  
         prevNode = None
         for node in path:
-            assert(isinstance(node, Node))
-
             if isinstance(node, (Action)):
                 results['attackCost'] += node.metadata['cost']
                 results['time'] += node.metadata['time']
@@ -70,7 +68,7 @@ class Brain(object):
                 #TODO block time
 
             if prevNode is not None:
-                edgeToThisNode = None #TODO: Consider updating model with backref 
+                edgeToThisNode = None 
                 for edge in prevNode.edges:
                     if edge.childNode == node:
                         edgeToThisNode = edge
@@ -82,7 +80,8 @@ class Brain(object):
                 else:
                     edgeToThisNode.pSuccess = results['pSuccess']
             
-            prevNode = node #TODO: Consider updating model with backref 
+            prevNode = node
+            # Can't just throw in a backfref because a node can have multiple parents
             # End outer for by setting current node as the next (prevNode )
 
         return results        

@@ -71,6 +71,7 @@ mitreAttack = {
     }
 }
 
+        #TODO: Replace concrete numbers with ranges and confidence intervals.
 
 class Node(object):
     def __init__(self, label="Anonymous", metadata={}):
