@@ -44,7 +44,7 @@ class Brain(object):
         edges = node.getEdges()
         for edge in edges:
             if edge not in walked:
-                self.pathsToVictory(edge.endNode, paths, chain=chain.copy(), walked=walked)
+                self.pathsToVictory(edge.childNode, paths, chain=chain.copy(), walked=walked)
                 walked[edge] = True # Stops walking a cycle more than once
 
         return paths
@@ -72,7 +72,7 @@ class Brain(object):
             if prevNode is not None:
                 edgeToThisNode = None #TODO: Consider updating model with backref 
                 for edge in prevNode.edges:
-                    if edge.endNode == node:
+                    if edge.childNode == node:
                         edgeToThisNode = edge
 
                 if edgeToThisNode is None: # This shouldn't happen and we should try to get rid of this check.

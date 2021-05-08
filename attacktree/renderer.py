@@ -49,7 +49,7 @@ class Renderer(object):
             edgeImplemented = True # default drawing style is to assume implemented
             if 'implemented' in node.metadata.keys() and node.metadata['implemented'] == False:
                 edgeImplemented = False
-            if 'implemented' in edge.endNode.metadata.keys() and edge.endNode.metadata['implemented'] == False:
+            if 'implemented' in edge.childNode.metadata.keys() and edge.childNode.metadata['implemented'] == False:
                 edgeImplemented = False
 
             # See if we should proceed with rendering the edge.
@@ -70,10 +70,10 @@ class Renderer(object):
                 label = label + f"\n {edge.pSuccess}%"
 
             #TODO: Replace edge mapping string (fancy) with dict of Edge object (simple)
-            if f"{node.uniq}:{edge.endNode.uniq}" not in mappedEdges:
-                dot.edge(node.uniq, edge.endNode.uniq, label=label, **edge_attr) # This is where the percentage % gets added
-                mappedEdges[f"{node.uniq}:{edge.endNode.uniq}"] = True # Keeps track of edge mapping so we don't get duplicates as we walk the tree, avoids never ending recursion
-                self._buildDot(node=edge.endNode, dot=dot, renderUnimplemented=renderUnimplemented, mappedEdges=mappedEdges, dotformat=dotformat) #recurse
+            if f"{node.uniq}:{edge.childNode.uniq}" not in mappedEdges:
+                dot.edge(node.uniq, edge.childNode.uniq, label=label, **edge_attr) # This is where the percentage % gets added
+                mappedEdges[f"{node.uniq}:{edge.childNode.uniq}"] = True # Keeps track of edge mapping so we don't get duplicates as we walk the tree, avoids never ending recursion
+                self._buildDot(node=edge.childNode, dot=dot, renderUnimplemented=renderUnimplemented, mappedEdges=mappedEdges, dotformat=dotformat) #recurse
 
     def loadStyle(self, path: str):
         # TODO: Do error handling

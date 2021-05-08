@@ -82,12 +82,12 @@ class Node(object):
 
     #Backref means we don't actually create a real edge, we just maintain a list of backward references that we can draw in later. 
     #It's clunky but
-    def connectTo(self, endNode, label=""):
-        edge = Edge(parentNode=self, endNode=endNode, label=label)
+    def connectTo(self, childNode, label=""):
+        edge = Edge(parentNode=self, childNode=childNode, label=label)
         
         self.edges.append(edge)
-        endNode.parentEdges.append(edge)
-        return endNode
+        childNode.parentEdges.append(edge)
+        return childNode
 
     def getEdges(self):
         return self.edges
@@ -135,14 +135,13 @@ class Node(object):
         return f"{self.__class__.__name__}:{id(self)}"
 
 class Edge:
-    endNode = None
+    childNode = None
     label = ""
     metadata = None
 
-    #todo: refactor endNode to childNode
-    def __init__(self, parentNode, endNode, label, metadata={}, pSuccess=-1):
+    def __init__(self, parentNode, childNode, label, metadata={}, pSuccess=-1):
         self.parentNode = parentNode
-        self.endNode = endNode
+        self.childNode = childNode
         self.pSuccess = pSuccess
         self.metadata = metadata
         self.label = label
@@ -154,7 +153,7 @@ class Edge:
     # Fails Undetected
     
     def describe(self):
-        return f"Edge '{self.label}' connects '{self.parentNode.label}' to '{self.endNode.label}'"
+        return f"Edge '{self.label}' connects '{self.parentNode.label}' to '{self.childNode.label}'"
 
     def __repr__(self):
         return describe()
@@ -245,7 +244,7 @@ class Block(Node):
 
         # Blocks are always inline, so remove the a -> b edge
         for edge in a.edges:
-            if edge.endNode == b:
+            if edge.childNode == b:
                 a.edges.remove(edge)
         else:
             self.connectTo(b)
