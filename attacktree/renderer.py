@@ -65,8 +65,13 @@ class Renderer(object):
             if edgeImplemented == False:
                 edge_attr = edge_attr | dotformat['_unimplemented_edge'] # style the unimplemented edge
 
+            label = edge.label
+            if edge.pSuccess != None and edge.pSuccess != -1:
+                label = label + f"\n {edge.pSuccess}%"
+
+            #TODO: Replace edge mapping string (fancy) with dict of Edge object (simple)
             if f"{node.uniq}:{edge.endNode.uniq}" not in mappedEdges:
-                dot.edge(node.uniq, edge.endNode.uniq, label=edge.label, **edge_attr)
+                dot.edge(node.uniq, edge.endNode.uniq, label=label, **edge_attr) # This is where the percentage % gets added
                 mappedEdges[f"{node.uniq}:{edge.endNode.uniq}"] = True # Keeps track of edge mapping so we don't get duplicates as we walk the tree, avoids never ending recursion
                 self._buildDot(node=edge.endNode, dot=dot, renderUnimplemented=renderUnimplemented, mappedEdges=mappedEdges, dotformat=dotformat) #recurse
 

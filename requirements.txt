@@ -1,1 +1,14 @@
+-e git+git@github.com:hyakuhei/attackTrees.git@0f27db5b1228646471496d2d39e40fe43fb57998#egg=attacktree
+attrs==20.3.0
+build==0.3.1.post1
+coverage==5.5
 graphviz==0.16
+iniconfig==1.1.1
+packaging==20.9
+pep517==0.10.0
+pluggy==0.13.1
+py==1.10.0
+pyparsing==2.4.7
+pytest==6.2.3
+pytest-cov==2.11.1
+toml==0.10.2

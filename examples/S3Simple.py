@@ -2,7 +2,7 @@ from attacktree.models import Action, Block, Detect, Discovery, Edge
 from attacktree.renderer import Renderer
 
 with Renderer(root = "Reality", goal= "Attacker gets data from bucket") as graph:
-    
+
     apiCache = Action(
         label="Search API Caches",
         chain="recon",
@@ -11,7 +11,7 @@ with Renderer(root = "Reality", goal= "Attacker gets data from bucket") as graph
         objective="Discover bucket paths",
         pSuccess=1.0
     )
-    graph.root.connectTo(apiCache, label="#Yolosec")
+    graph.root.add(apiCache, edge_label="#Yolosec")
 
     s3urls = Discovery(
         label="S3 Urls",
@@ -19,7 +19,7 @@ with Renderer(root = "Reality", goal= "Attacker gets data from bucket") as graph
         sensitivity=3,
         value=0
     )
-    apiCache.createEdge(s3urls, label="#Yolosec")
+    apiCache.add(s3urls, edge_label="#Yolosec")
 
     downloadFiles = Action(
         chain="exfiltration",
@@ -30,14 +30,11 @@ with Renderer(root = "Reality", goal= "Attacker gets data from bucket") as graph
         pSuccess=1.0,
         detections=["CloudWatch","DLP"]
     )
-    s3urls.createEdge(downloadFiles, label="#Yolosec")
-    downloadFiles.createEdge(goal, label="#Yolosec")
+    s3urls.add(downloadFiles, edge_label="#Yolosec")
+    downloadFiles.add(graph.goal, edge_label="#Yolosec")
 
-    style = renderer.loadStyle('style.json')
-    renderer.render(
-        node=root,
+    graph.render(
         renderUnimplemented=True,
-        style=style,
-        fname="example_simpleS3",
+        fname="example_S3Simple",
         fout="png"
     )
