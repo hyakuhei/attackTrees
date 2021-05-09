@@ -71,23 +71,24 @@ mitreAttack = {
     }
 }
 
+        #TODO: Replace concrete numbers with ranges and confidence intervals.
 
 class Node(object):
     def __init__(self, label="Anonymous", metadata={}):
         self.label = label
         self.uniq = uuid.uuid4().hex #TODO: Remove this it's not needed, it's kinda here to make rendering work
-        self.edges = []
         self.metadata = {}
+        self.edges = []
         self.parentEdges = [] # backref
 
     #Backref means we don't actually create a real edge, we just maintain a list of backward references that we can draw in later. 
     #It's clunky but
-    def connectTo(self, endNode, label=""):
-        edge = Edge(parentNode=self, endNode=endNode, label=label)
+    def connectTo(self, childNode, label=""):
+        edge = Edge(parentNode=self, childNode=childNode, label=label)
         
         self.edges.append(edge)
-        endNode.parentEdges.append(edge)
-        return endNode
+        childNode.parentEdges.append(edge)
+        return childNode
 
     def getEdges(self):
         return self.edges
@@ -135,14 +136,13 @@ class Node(object):
         return f"{self.__class__.__name__}:{id(self)}"
 
 class Edge:
-    endNode = None
+    childNode = None
     label = ""
     metadata = None
 
-    #todo: refactor endNode to childNode
-    def __init__(self, parentNode, endNode, label, metadata={}, pSuccess=-1):
+    def __init__(self, parentNode, childNode, label, metadata={}, pSuccess=-1):
         self.parentNode = parentNode
-        self.endNode = endNode
+        self.childNode = childNode
         self.pSuccess = pSuccess
         self.metadata = metadata
         self.label = label
@@ -154,7 +154,7 @@ class Edge:
     # Fails Undetected
     
     def describe(self):
-        return f"Edge '{self.label}' connects '{self.parentNode.label}' to '{self.endNode.label}'"
+        return f"Edge '{self.label}' connects '{self.parentNode.label}' to '{self.childNode.label}'"
 
     def __repr__(self):
         return describe()
@@ -163,13 +163,11 @@ class Root(Node):
     def __init__(self,
                  label: str):
         super().__init__(label=label)
-        self.metadata = {}
 
 class Goal(Node):
     def __init__(self,
                  label: str):
         super().__init__(label=label)
-        self.metadata = {}   
 
 # label: 'The name of the node',
 # chain: 'The stage of the Mitre Att&ck chain represented, e.g "recon"'
@@ -187,13 +185,11 @@ class Action(Node):
                  pSuccess: int = 100,
                  detections: list = []):
         super().__init__(label=label)
-        self.metadata = {}
-        self.metadata['chain'] = chain
-        self.metadata['cost'] = cost
-        self.metadata['time'] = time
-        self.metadata['pSuccess'] = pSuccess
-        self.metadata['detections'] = detections
-        self.edges = []
+        self.pSuccess = pSuccess
+        self.chain = chain
+        self.cost = cost
+        self.time = time
+        # self.metadata = [] ## I don't have a need for this right now, so removing it,but I expect to need it later.
 
 class Detect(Node):
     def __init__(self,
@@ -203,16 +199,14 @@ class Detect(Node):
                  description: str = "",
                  complexity: int = 0,
                  latency: int = 0,
-                 pSuccess: int = 100):
+                 pDetect: int = 100):
         super().__init__(label=label)
-        self.metadata = {}
-        self.metadata['cost'] = cost
-        self.metadata['description'] = description
-        self.metadata['complexity'] = complexity
-        self.metadata['latency'] = latency
-        self.metadata['implemented'] = implemented
-        self.metadata['pSuccess'] = pSuccess
-        self.edges = []
+        self.implemented = implemented
+        self.cost = cost
+        self.description = description
+        self.complexity = complexity
+        self.latency = latency
+        self.pDetect = pDetect
 
 class Block(Node):
     def __init__(self,
@@ -223,13 +217,11 @@ class Block(Node):
                  complexity: int = 0,
                  pDefend: int = 100):
         super().__init__(label=label)
-        self.metadata = {}
-        self.metadata['cost'] = cost
-        self.metadata['description'] = description
-        self.metadata['complexity'] = complexity
-        self.metadata['implemented'] = implemented
-        self.metadata['pDefend'] = pDefend
-        self.edges = []
+        self.implemented = implemented
+        self.cost = cost
+        self.description = description
+        self.complexity = complexity
+        self.pDefend = pDefend
     
     def insertBetween(self, a: Node, b: Node):
         # When two nodes are connected, insert a blocking node between them, replacing or updating the existing connection.
@@ -245,7 +237,7 @@ class Block(Node):
 
         # Blocks are always inline, so remove the a -> b edge
         for edge in a.edges:
-            if edge.endNode == b:
+            if edge.childNode == b:
                 a.edges.remove(edge)
         else:
             self.connectTo(b)
@@ -263,14 +255,14 @@ class Block(Node):
 class Discovery(Node):
     def __init__(self,
                  label: str,
+                 pSuccess: int = 100,
                  description: str = "",
                  sensitivity: int = 0,
                  value: int = 0,
                  markings: list = []):
         super().__init__(label=label)
-        self.metadata={}
-        self.metadata['description'] = description
-        self.metadata['sensitivity'] = sensitivity
-        self.metadata['value'] = value
-        self.metadata['markings'] = markings
-        self.edges = []
+        self.pSuccess = pSuccess
+        self.description = description
+        self.sensitivity = sensitivity
+        self.value = value
+        self.markings = markings

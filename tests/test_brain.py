@@ -101,20 +101,17 @@ def basicTree():
 
 def test_buildTree(render=True):
     root = basicTree()
+    brain = Brain()
 
     # Check root is correct type
     assert(isinstance(root, Root))
 
-    paths = Brain().pathsToVictory(root, [])
+    paths = brain.pathsToVictory(root)
+
+    for path in paths:
+        brain.evaluatePath(path)
 
     assert(len(paths) == 3)
-
-    # Check the ordering and results of the pathsToVicotry
-    # [Start, Network Recon, Credential Stuffing, Systems Access]
-    #TODO: ASSERT ABOUT PATHS TO VICTORY
-
-    #for pathset in paths:
-    #    print(f"[{len(pathset)}]: {' -> '.join(x.label for x in pathset)}") # Single string "[3] action1->action2->action3"
     
     if render:
         Renderer().render(
@@ -256,12 +253,11 @@ def test_pathEvaluationWithBlock(render=True):
     assert(res['attackCost']==1000)
     assert(res['pSuccess']==70)
 
-    assert(a.metadata['pSuccess']==100) 
+    assert(a.pSuccess==100) 
 
     block = Block(label="FIREWALL",implemented=True,cost=0,pDefend=50)
     block.insertBetween(a,b)
 
-  #  assert(a.metadata['pSuccess']==50) # When a block gets inserted, it adjusts the pSuccess of the parent node
     paths = []
     _ = brain.pathsToVictory(root, paths)
     res = brain.evaluatePath(paths[0])

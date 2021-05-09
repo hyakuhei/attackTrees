@@ -12,11 +12,6 @@ class Brain(object):
     def __init__(self):
         self.exploitChain = []
 
-    # Walk throught the nodes of tree and print if metadata is missing
-    def lint(self, root: Node, walked: dict={}):
-        pass
-        # Walk and print metadata
-
     # Walk the tree, adding to the chain (DFS)
     # If we hit the goal, add that chain to our paths 
     def pathsToVictory(self,
@@ -44,13 +39,13 @@ class Brain(object):
         edges = node.getEdges()
         for edge in edges:
             if edge not in walked:
-                self.pathsToVictory(edge.endNode, paths, chain=chain.copy(), walked=walked)
+                self.pathsToVictory(edge.childNode, paths, chain=chain.copy(), walked=walked)
                 walked[edge] = True # Stops walking a cycle more than once
 
         return paths
 
+    # Walk the given path, add up stats and annotate edges
     def evaluatePath(self, path):
-        #TODO: Replace concrete numbers with ranges and confidence intervals.
         # It's not the nodes we need to evaluate, it's the edges. As those are what get changed adding a block
         results = {}
         for key in rules: #Pre-load data from rules
@@ -58,21 +53,20 @@ class Brain(object):
  
         prevNode = None
         for node in path:
-            assert(isinstance(node, Node))
-
+            #TODO: Introduce pDiscovery value (or pSuccess on Discovery() )
             if isinstance(node, (Action)):
-                results['attackCost'] += node.metadata['cost']
-                results['time'] += node.metadata['time']
-                results['pSuccess'] = int((results['pSuccess'] * node.metadata['pSuccess']) / 100)
+                results['attackCost'] += node.cost
+                results['time'] += node.time
+                results['pSuccess'] = int((results['pSuccess'] * node.pSuccess) / 100)
             if isinstance(node, (Block)):
-                results['defenceCost']  += node.metadata['cost']
-                results['pSuccess'] -= node.metadata['pDefend']
+                results['defenceCost']  += node.cost
+                results['pSuccess'] -= node.pDefend
                 #TODO block time
 
             if prevNode is not None:
-                edgeToThisNode = None #TODO: Consider updating model with backref 
+                edgeToThisNode = None 
                 for edge in prevNode.edges:
-                    if edge.endNode == node:
+                    if edge.childNode == node:
                         edgeToThisNode = edge
 
                 if edgeToThisNode is None: # This shouldn't happen and we should try to get rid of this check.
@@ -82,7 +76,8 @@ class Brain(object):
                 else:
                     edgeToThisNode.pSuccess = results['pSuccess']
             
-            prevNode = node #TODO: Consider updating model with backref 
+            prevNode = node
+            # Can't just throw in a backfref because a node can have multiple parents
             # End outer for by setting current node as the next (prevNode )
 
         return results        

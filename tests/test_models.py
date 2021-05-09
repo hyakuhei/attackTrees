@@ -20,7 +20,7 @@ def test_insertBetween_50perecent(render=False):
 
     # Verify prep
     assert(len(a.edges)==1)
-    assert(a.edges[0].endNode == b)
+    assert(a.edges[0].childNode == b)
 
     # Create a block
     block = Block(
@@ -35,7 +35,7 @@ def test_insertBetween_50perecent(render=False):
     # After 
     assert(len(a.edges)==1)
     assert(len(block.edges)==1)
-    assert(a.edges[0].endNode.edges[0].endNode == b)
+    assert(a.edges[0].childNode.edges[0].childNode == b)
 
     if render:
         Renderer().render(
@@ -69,7 +69,7 @@ def test_insertBlockBetween_100perecent(render=False):
 
     # After 
     assert(len(b.edges)==1) # As the block has 100% chance of working, c should be unreachable
-    assert(b.edges[0].endNode == block)
+    assert(b.edges[0].childNode == block)
 
     if render:
         Renderer().render(
@@ -105,10 +105,10 @@ def test_instertBlockBetweenPatiallySuccessfulActions(render=True):
     block.insertBetween(a, b)
 
     assert(len(a.edges)==1)
-    assert(a.edges[0].endNode==block)
+    assert(a.edges[0].childNode==block)
     
     assert(len(block.edges)==1)
-    assert(block.edges[0].endNode==b)
+    assert(block.edges[0].childNode==b)
 
     # The tested function:
     if render:
