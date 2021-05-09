@@ -26,8 +26,10 @@ class Renderer(object):
     def _buildDot(self, node: Node, dot: Digraph, renderUnimplemented: bool, mappedEdges: dict={}, dotformat: dict={}):
         node_attr = None # .dot formatting
         unimplemented = False
-        if 'implemented' in node.metadata.keys() and node.metadata['implemented']==False:
+
+        if hasattr(node, "implemented") and node.implemented == False:
             unimplemented = True
+        #TODO fix this wierd inverted logic
         
         # The node is marked as unimplemented and we are told not to render those nodes
         if renderUnimplemented == False and unimplemented == True:
@@ -39,6 +41,11 @@ class Renderer(object):
             if unimplemented:
                 node_attr = node_attr | dotformat['_unimplemented_override'] # Style the unimplemented node
 
+            nodeLabel = node.label
+            if isinstance(node, (Action, Discovery)):
+                nodeLabel += f"\n{node.pSuccess}"
+            if isinstance(node, (Block)):
+                nodeLabel += f"\n{node.pDefend}"
             dot.node(node.uniq, node.label, **node_attr)
         else:
             dot.node(node.uniq, node.label)
@@ -47,9 +54,11 @@ class Renderer(object):
             # Make sure we don't draw a connection to an unimplemented node, if that renderUnimplemented == False
             
             edgeImplemented = True # default drawing style is to assume implemented
-            if 'implemented' in node.metadata.keys() and node.metadata['implemented'] == False:
+
+            if isinstance(node, Block) and node.implemented == False:
                 edgeImplemented = False
-            if 'implemented' in edge.childNode.metadata.keys() and edge.childNode.metadata['implemented'] == False:
+
+            if isinstance(edge.childNode, Block) and edge.childNode.implemented == False:
                 edgeImplemented = False
 
             # See if we should proceed with rendering the edge.

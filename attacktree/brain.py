@@ -12,11 +12,6 @@ class Brain(object):
     def __init__(self):
         self.exploitChain = []
 
-    # Walk throught the nodes of tree and print if metadata is missing
-    def lint(self, root: Node, walked: dict={}):
-        pass
-        # Walk and print metadata
-
     # Walk the tree, adding to the chain (DFS)
     # If we hit the goal, add that chain to our paths 
     def pathsToVictory(self,
@@ -49,8 +44,8 @@ class Brain(object):
 
         return paths
 
+    # Walk the given path, add up stats and annotate edges
     def evaluatePath(self, path):
-        #TODO: Replace concrete numbers with ranges and confidence intervals.
         # It's not the nodes we need to evaluate, it's the edges. As those are what get changed adding a block
         results = {}
         for key in rules: #Pre-load data from rules
@@ -58,13 +53,14 @@ class Brain(object):
  
         prevNode = None
         for node in path:
+            #TODO: Introduce pDiscovery value (or pSuccess on Discovery() )
             if isinstance(node, (Action)):
-                results['attackCost'] += node.metadata['cost']
-                results['time'] += node.metadata['time']
-                results['pSuccess'] = int((results['pSuccess'] * node.metadata['pSuccess']) / 100)
+                results['attackCost'] += node.cost
+                results['time'] += node.time
+                results['pSuccess'] = int((results['pSuccess'] * node.pSuccess) / 100)
             if isinstance(node, (Block)):
-                results['defenceCost']  += node.metadata['cost']
-                results['pSuccess'] -= node.metadata['pDefend']
+                results['defenceCost']  += node.cost
+                results['pSuccess'] -= node.pDefend
                 #TODO block time
 
             if prevNode is not None:

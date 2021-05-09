@@ -253,12 +253,11 @@ def test_pathEvaluationWithBlock(render=True):
     assert(res['attackCost']==1000)
     assert(res['pSuccess']==70)
 
-    assert(a.metadata['pSuccess']==100) 
+    assert(a.pSuccess==100) 
 
     block = Block(label="FIREWALL",implemented=True,cost=0,pDefend=50)
     block.insertBetween(a,b)
 
-  #  assert(a.metadata['pSuccess']==50) # When a block gets inserted, it adjusts the pSuccess of the parent node
     paths = []
     _ = brain.pathsToVictory(root, paths)
     res = brain.evaluatePath(paths[0])
