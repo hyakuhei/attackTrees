@@ -25,7 +25,14 @@ class Renderer(object):
     # A recursive function that walks the node tree
     # And creates a graph for turning into graphviz
     # TODO: Fix complexity PEP8 C901
-    def _buildDot(self, node: Node, dot: Digraph, renderUnimplemented: bool, mappedEdges: dict = {}, dotformat: dict = {}):
+    def _buildDot(
+        self,
+        node: Node,
+        dot: Digraph,
+        renderUnimplemented: bool,
+        mappedEdges: dict = {},
+        dotformat: dict = {},
+    ):
         node_attr = None  # .dot formatting
         unimplemented = False
 
@@ -42,7 +49,7 @@ class Renderer(object):
             # Overload the default formatting shape if the Node is flagged as unimplemented
             if unimplemented:
                 # Style the unimplemented node
-                node_attr = node_attr | dotformat['_unimplemented_override']
+                node_attr = node_attr | dotformat["_unimplemented_override"]
 
             nodeLabel = node.label
             if isinstance(node, (Action, Discovery)):
@@ -61,7 +68,10 @@ class Renderer(object):
             if isinstance(node, Block) and node.implemented is False:
                 edgeImplemented = False
 
-            if isinstance(edge.childNode, Block) and edge.childNode.implemented is False:
+            if (
+                isinstance(edge.childNode, Block)
+                and edge.childNode.implemented is False
+            ):
                 edgeImplemented = False
 
             # See if we should proceed with rendering the edge.
@@ -71,12 +81,12 @@ class Renderer(object):
                 continue
 
             # Setup default edge rendering style
-            edge_attr = dotformat['Edge']
+            edge_attr = dotformat["Edge"]
 
             # Override style for unimplemented edge
             if edgeImplemented is False:
                 # style the unimplemented edge
-                edge_attr = edge_attr | dotformat['_unimplemented_edge']
+                edge_attr = edge_attr | dotformat["_unimplemented_edge"]
 
             label = edge.label
             if edge.pSuccess is not None and edge.pSuccess != -1:
@@ -85,12 +95,16 @@ class Renderer(object):
             # TODO: Replace edge mapping string (fancy) with dict of Edge object (simple)
             if f"{node.uniq}:{edge.childNode.uniq}" not in mappedEdges:
                 # This is where the percentage % gets added
-                dot.edge(node.uniq, edge.childNode.uniq,
-                         label=label, **edge_attr)
+                dot.edge(node.uniq, edge.childNode.uniq, label=label, **edge_attr)
                 # Keeps track of edge mapping so we don't get duplicates as we walk the tree, avoids never ending recursion
                 mappedEdges[f"{node.uniq}:{edge.childNode.uniq}"] = True
-                self._buildDot(node=edge.childNode, dot=dot, renderUnimplemented=renderUnimplemented,
-                               mappedEdges=mappedEdges, dotformat=dotformat)  # recurse
+                self._buildDot(
+                    node=edge.childNode,
+                    dot=dot,
+                    renderUnimplemented=renderUnimplemented,
+                    mappedEdges=mappedEdges,
+                    dotformat=dotformat,
+                )  # recurse
 
     def loadStyle(self, path: str):
         # TODO: Do error handling
@@ -99,13 +113,15 @@ class Renderer(object):
 
         return style
 
-    def render(self,
-               root: Node = None,
-               renderUnimplemented: bool = True,
-               style: dict = {},
-               fname: str = "attacktree-graph",
-               fout: str = "png",
-               renderOnExit=False):
+    def render(
+        self,
+        root: Node = None,
+        renderUnimplemented: bool = True,
+        style: dict = {},
+        fname: str = "attacktree-graph",
+        fout: str = "png",
+        renderOnExit=False,
+    ):
         if root is not None:
             self.root = root
 
@@ -119,16 +135,17 @@ class Renderer(object):
         # In case render is called multiple times, e.g jupyter
         self.renderOnExit = renderOnExit
         dot = Digraph()
-        dot.graph_attr['overlap'] = 'false'
-        dot.graph_attr['splines'] = 'True'
-        dot.graph_attr['nodesep'] = "0.2"
-        dot.graph_attr['ranksep'] = "0.4"
+        dot.graph_attr["overlap"] = "false"
+        dot.graph_attr["splines"] = "True"
+        dot.graph_attr["nodesep"] = "0.2"
+        dot.graph_attr["ranksep"] = "0.4"
 
         if len(style) == 0:  # TODO: Make this a better check
             with resources.open_text("attacktree", "style.json") as fid:
                 style = json.load(fid)
 
-        self._buildDot(self.root, dot, dotformat=style,
-                       renderUnimplemented=renderUnimplemented)  # recursive call
+        self._buildDot(
+            self.root, dot, dotformat=style, renderUnimplemented=renderUnimplemented
+        )  # recursive call
         dot.format = fout
         dot.render(fname, view=True)
