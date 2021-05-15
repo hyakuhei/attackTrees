@@ -1,4 +1,4 @@
-![CI Badge](https://github.com/hyakuhei/attackTrees/actions/workflows/test.yml/badge.svg) ![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+![CI Badge](https://github.com/hyakuhei/attackTrees/actions/workflows/test.yml/badge.svg) ![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)]
 
 
 ## WIP warning
