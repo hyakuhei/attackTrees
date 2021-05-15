@@ -1,3 +1,5 @@
+![CI Badge](https://github.com/hyakuhei/attackTrees/actions/workflows/test.yml/badge.svg)
+
 ## WIP warning
 This is a work in progress, a toy that I've been working on over the weekend. It's on GitHub just as a safe place to save it. It's in a public repo because it's not sensitive but I'm not encouraging anyone to use it :)
 
