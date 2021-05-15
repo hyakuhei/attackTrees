@@ -1,4 +1,5 @@
-![CI Badge](https://github.com/hyakuhei/attackTrees/actions/workflows/test.yml/badge.svg)
+![CI Badge](https://github.com/hyakuhei/attackTrees/actions/workflows/test.yml/badge.svg) ![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 
 ## WIP warning
 This is a work in progress, a toy that I've been working on over the weekend. It's on GitHub just as a safe place to save it. It's in a public repo because it's not sensitive but I'm not encouraging anyone to use it :)
