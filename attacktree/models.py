@@ -6,64 +6,72 @@ import uuid
 
 # TODO: Replace metadata with class values
 
-defaultEdgeLabels={
-    'Action':'Next',
-    'Discovery':'Learn',
-    'Block':'Fail',
-    'Detect':'Detect'
+defaultEdgeLabels = {
+    'Action': "Next",
+    'Discovery': "Learn",
+    'Block': "Fail",
+    'Detect': "Detect"
 }
 
 rules = {
-    'pSuccess':{
-        'math':"multiply",
-        'startWith':100,
-        'unit':"probability",
-        'formatString':"{}",
-        'description':"pSuccess: int value between 0 and 1 that describes the probability of an `Action` or `Block` being effective within the given time"
+    'pSuccess': {
+        'math': "multiply",
+        'startWith': 100,
+        'unit': "probability",
+        'formatString': "{}",
+        'description': """
+            pSuccess: int value between 0 and 1 that describes the
+            probability of an `Action` or `Block` being effective within the given time
+            """
     },
-    "attackCost":{
-        'math':"add",
-        'startWith':0,
-        'unit':"dollars",
-        'formatString':"${}",
-        'description':"cost: estimate of the number of dollars required to be invested to effectively run an `Action` or `Block`"
+    "attackCost": {
+        'math': "add",
+        'startWith': 0,
+        'unit': "dollars",
+        'formatString': "${}",
+        'description': """
+            cost: estimate of the number of dollars required to be invested to
+            effectively run an `Action` or `Block`"""
     },
-    "time":{
-        'math':"add",
-        'startWith':0,
-        'unit':"hours",
-        'formatString':"{}h",
-        'description':"time: estimate of how long this `Action` or `Block` will take to be effective"
+    "time": {
+        'math': "add",
+        'startWith': 0,
+        'unit': "hours",
+        'formatString': "{}h",
+        'description': """
+            time: estimate of how long this `Action` or `Block` will take to
+            be effective"""
     },
-    "defenceCost":{
-        'math':"add",
-        'startWith':0,
-        'unit':"dollars",
-        'formatString':"${}",
-        'description':"Cost of defensive controls"
+    "defenceCost": {
+        'math': "add",
+        'startWith': 0,
+        'unit': "dollars",
+        'formatString': "${}",
+        'description': "Cost of defensive controls"
     }
 }
 
 mitreAttack = {
-    'recon':{
+    'recon': {
         'shortName': "recon",
         'friendlyName': "Reconnaissance",
         'objective': "The adversary is trying to gather information they can use to plan future operations",
         'url': "https://attack.mitre.org/tactics/TA0043/"
     },
-    'resourceDev':{
+    'resourceDev': {
         'shortName': "resourceDev",
         'friendlyName': "Resource Development",
         'objective': "The adversary is trying to establish resources they can use to support operations.",
         'url': "https://attack.mitre.org/tactics/TA0042/"
     },
-    'credStuffing':{
+    'credStuffing': {
         'shortName': "credStuffing",
         'friendlyName': "Credential Stuffing",
-        'objective': "Adversaries may use credentials obtained from breach dumps of unrelated accounts to gain access to target accounts through credential overlap.",
+        'objective': """Adversaries may use credentials obtained from breach dumps of unrelated accounts
+            to gain access to target accounts through credential overlap.""",
         'url': "https://attack.mitre.org/techniques/T1110/004/"
     },
-    'execution':{
+    'execution': {
         'shortName': "execution",
         'friendlyName': "Execution",
         'objective': "The adversary is trying to run malicious code.",
@@ -71,21 +79,24 @@ mitreAttack = {
     }
 }
 
-        #TODO: Replace concrete numbers with ranges and confidence intervals.
+# TODO: Replace concrete numbers with ranges and confidence intervals.
+
 
 class Node(object):
     def __init__(self, label="Anonymous", metadata={}):
         self.label = label
-        self.uniq = uuid.uuid4().hex #TODO: Remove this it's not needed, it's kinda here to make rendering work
+        # TODO: Remove this it's not needed, it's kinda here to make rendering work
+        self.uniq = uuid.uuid4().hex
         self.metadata = {}
         self.edges = []
-        self.parentEdges = [] # backref
+        self.parentEdges = []  # backref
 
-    #Backref means we don't actually create a real edge, we just maintain a list of backward references that we can draw in later. 
-    #It's clunky but
+    # Backref means we don't actually create a real edge,
+    # we just maintain a list of backward references that we can draw in later.
+    # It's clunky but
     def connectTo(self, childNode, label=""):
         edge = Edge(parentNode=self, childNode=childNode, label=label)
-        
+
         self.edges.append(edge)
         childNode.parentEdges.append(edge)
         return childNode
@@ -93,8 +104,8 @@ class Node(object):
     def getEdges(self):
         return self.edges
 
-    #shortcut to create a connected action
-    def action(self, label: str, edge_label: str="Next"): 
+    # shortcut to create a connected action
+    def action(self, label: str, edge_label: str = "Next"):
         a = Action(label)
         self.connectTo(a, edge_label)
         return a
@@ -104,8 +115,8 @@ class Node(object):
     # Makes writing models and declaring detailed actions easier
 
     # TODO: I had to drop type-hinting because the Node class can't resolve itself
-    def add(self, node, edge_label: str=None):
-        if edge_label == None:
+    def add(self, node, edge_label: str = None):
+        if edge_label is None:
             if node.__class__.__name__ in defaultEdgeLabels:
                 edge_label = defaultEdgeLabels[node.__class__.__name__]
             else:
@@ -114,26 +125,27 @@ class Node(object):
         self.connectTo(node, edge_label)
         return node
 
-    #shortcut to create a connected block
-    def block(self, label: str, implemented: bool, edge_label: str="Fail"):
+    # shortcut to create a connected block
+    def block(self, label: str, implemented: bool, edge_label: str = "Fail"):
         b = Block(label, implemented=implemented)
         self.connectTo(b, edge_label)
         return b
 
-    #shortcut to create a connected detection
-    def detect(self, label: str, implemented: bool, edge_label: str="Detect"):
+    # shortcut to create a connected detection
+    def detect(self, label: str, implemented: bool, edge_label: str = "Detect"):
         d = Detect(label, implemented=implemented)
         self.connectTo(d, edge_label)
         return d
 
-    #shortcut to create a connected discovery
-    def discovery(self, label: str, edge_label: str="Learn"):
+    # shortcut to create a connected discovery
+    def discovery(self, label: str, edge_label: str = "Learn"):
         d = Discovery(label)
         self.connectTo(d, edge_label)
         return d
 
     def __repr__(self):
         return f"{self.__class__.__name__}:{id(self)}"
+
 
 class Edge:
     childNode = None
@@ -152,17 +164,19 @@ class Edge:
     # Succeeds Undetected
     # Succeeds Detected
     # Fails Undetected
-    
+
     def describe(self):
         return f"Edge '{self.label}' connects '{self.parentNode.label}' to '{self.childNode.label}'"
 
     def __repr__(self):
-        return describe()
+        return self.describe()
+
 
 class Root(Node):
     def __init__(self,
                  label: str):
         super().__init__(label=label)
+
 
 class Goal(Node):
     def __init__(self,
@@ -174,9 +188,11 @@ class Goal(Node):
 # cost: 'Estimate of any material cost to this path, in dollars, does not include time'
 # time: 'Estimate of time taken to complete the activity in hours
 # pSuccess: Likelihood of success, 0-1
-# detections: 'Any known detections for this activity that _could_ be 
+# detections: 'Any known detections for this activity that _could_ be
+
+
 class Action(Node):
-    def __init__(self, 
+    def __init__(self,
                  label: str,
                  chain: dict = None,
                  cost: int = 0,
@@ -190,6 +206,7 @@ class Action(Node):
         self.cost = cost
         self.time = time
         # self.metadata = [] ## I don't have a need for this right now, so removing it,but I expect to need it later.
+
 
 class Detect(Node):
     def __init__(self,
@@ -208,6 +225,7 @@ class Detect(Node):
         self.latency = latency
         self.pDetect = pDetect
 
+
 class Block(Node):
     def __init__(self,
                  label: str,
@@ -222,16 +240,15 @@ class Block(Node):
         self.description = description
         self.complexity = complexity
         self.pDefend = pDefend
-    
+
     def insertBetween(self, a: Node, b: Node):
         # When two nodes are connected, insert a blocking node between them, replacing or updating the existing connection.
         # Add 'block' to a -> b
 
-        #New rule. All Blocks are _inline_
+        # New rule. All Blocks are _inline_
         # a -> b becomes a-> block -> b
 
-
-        # See if this block will work 100% (so it severes the connection) or partial, meaning we need to re-balance 
+        # See if this block will work 100% (so it severes the connection) or partial, meaning we need to re-balance
         # Connect A to the new block
         a.connectTo(self)
 
@@ -248,7 +265,7 @@ class Block(Node):
 
 
 # label: 'The name of the node'
-# description: 'A description of the data/information 
+# description: 'A description of the data/information
 # sensitivity: 'A description of how sensitive the data is considered to be
 # value: 'Perceived monetary value if applicable'
 # markings: 'Any specific markings for the data, like PII, SPI, HIPPA etc'
