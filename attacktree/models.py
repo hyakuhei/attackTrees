@@ -7,76 +7,76 @@ import uuid
 # TODO: Replace metadata with class values
 
 defaultEdgeLabels = {
-    'Action': "Next",
-    'Discovery': "Learn",
-    'Block': "Fail",
-    'Detect': "Detect"
+    "Action": "Next",
+    "Discovery": "Learn",
+    "Block": "Fail",
+    "Detect": "Detect",
 }
 
 rules = {
-    'pSuccess': {
-        'math': "multiply",
-        'startWith': 100,
-        'unit': "probability",
-        'formatString': "{}",
-        'description': """
+    "pSuccess": {
+        "math": "multiply",
+        "startWith": 100,
+        "unit": "probability",
+        "formatString": "{}",
+        "description": """
             pSuccess: int value between 0 and 1 that describes the
             probability of an `Action` or `Block` being effective within the given time
-            """
+            """,
     },
     "attackCost": {
-        'math': "add",
-        'startWith': 0,
-        'unit': "dollars",
-        'formatString': "${}",
-        'description': """
+        "math": "add",
+        "startWith": 0,
+        "unit": "dollars",
+        "formatString": "${}",
+        "description": """
             cost: estimate of the number of dollars required to be invested to
-            effectively run an `Action` or `Block`"""
+            effectively run an `Action` or `Block`""",
     },
     "time": {
-        'math': "add",
-        'startWith': 0,
-        'unit': "hours",
-        'formatString': "{}h",
-        'description': """
+        "math": "add",
+        "startWith": 0,
+        "unit": "hours",
+        "formatString": "{}h",
+        "description": """
             time: estimate of how long this `Action` or `Block` will take to
-            be effective"""
+            be effective""",
     },
     "defenceCost": {
-        'math': "add",
-        'startWith': 0,
-        'unit': "dollars",
-        'formatString': "${}",
-        'description': "Cost of defensive controls"
-    }
+        "math": "add",
+        "startWith": 0,
+        "unit": "dollars",
+        "formatString": "${}",
+        "description": "Cost of defensive controls",
+    },
 }
 
 mitreAttack = {
-    'recon': {
-        'shortName': "recon",
-        'friendlyName': "Reconnaissance",
-        'objective': "The adversary is trying to gather information they can use to plan future operations",
-        'url': "https://attack.mitre.org/tactics/TA0043/"
+    "recon": {
+        "shortName": "recon",
+        "friendlyName": "Reconnaissance",
+        "objective": "The adversary is trying to gather information they can use to plan future operations",
+        "url": "https://attack.mitre.org/tactics/TA0043/",
     },
-    'resourceDev': {
-        'shortName': "resourceDev",
-        'friendlyName': "Resource Development",
-        'objective': "The adversary is trying to establish resources they can use to support operations.",
-        'url': "https://attack.mitre.org/tactics/TA0042/"
+    "resourceDev": {
+        "shortName": "resourceDev",
+        "friendlyName": "Resource Development",
+        "objective": "The adversary is trying to establish resources they can use to support operations.",
+        "url": "https://attack.mitre.org/tactics/TA0042/",
     },
-    'credStuffing': {
-        'shortName': "credStuffing",
-        'friendlyName': "Credential Stuffing",
-        'objective': """Adversaries may use credentials obtained from breach dumps of unrelated accounts
+    "credStuffing": {
+        "shortName": "credStuffing",
+        "friendlyName": "Credential Stuffing",
+        "objective": """Adversaries may use credentials obtained from breach dumps of unrelated accounts
             to gain access to target accounts through credential overlap.""",
-        'url': "https://attack.mitre.org/techniques/T1110/004/"
+        "url": "https://attack.mitre.org/techniques/T1110/004/",
     },
-    'execution': {
-        'shortName': "execution",
-        'friendlyName': "Execution",
-        'objective': "The adversary is trying to run malicious code.",
-        'url': "https://attack.mitre.org/tactics/TA0002/"
-    }
+    "execution": {
+        "shortName": "execution",
+        "friendlyName": "Execution",
+        "objective": "The adversary is trying to run malicious code.",
+        "url": "https://attack.mitre.org/tactics/TA0002/",
+    },
 }
 
 # TODO: Replace concrete numbers with ranges and confidence intervals.
@@ -173,15 +173,14 @@ class Edge:
 
 
 class Root(Node):
-    def __init__(self,
-                 label: str):
+    def __init__(self, label: str):
         super().__init__(label=label)
 
 
 class Goal(Node):
-    def __init__(self,
-                 label: str):
+    def __init__(self, label: str):
         super().__init__(label=label)
+
 
 # label: 'The name of the node',
 # chain: 'The stage of the Mitre Att&ck chain represented, e.g "recon"'
@@ -192,14 +191,16 @@ class Goal(Node):
 
 
 class Action(Node):
-    def __init__(self,
-                 label: str,
-                 chain: dict = None,
-                 cost: int = 0,
-                 time: int = 0,
-                 objective: str = "",
-                 pSuccess: int = 100,
-                 detections: list = []):
+    def __init__(
+        self,
+        label: str,
+        chain: dict = None,
+        cost: int = 0,
+        time: int = 0,
+        objective: str = "",
+        pSuccess: int = 100,
+        detections: list = [],
+    ):
         super().__init__(label=label)
         self.pSuccess = pSuccess
         self.chain = chain
@@ -209,14 +210,16 @@ class Action(Node):
 
 
 class Detect(Node):
-    def __init__(self,
-                 label: str,
-                 implemented: bool,
-                 cost: int = 0,
-                 description: str = "",
-                 complexity: int = 0,
-                 latency: int = 0,
-                 pDetect: int = 100):
+    def __init__(
+        self,
+        label: str,
+        implemented: bool,
+        cost: int = 0,
+        description: str = "",
+        complexity: int = 0,
+        latency: int = 0,
+        pDetect: int = 100,
+    ):
         super().__init__(label=label)
         self.implemented = implemented
         self.cost = cost
@@ -227,13 +230,15 @@ class Detect(Node):
 
 
 class Block(Node):
-    def __init__(self,
-                 label: str,
-                 implemented: bool,
-                 cost: int = 0,
-                 description: str = "",
-                 complexity: int = 0,
-                 pDefend: int = 100):
+    def __init__(
+        self,
+        label: str,
+        implemented: bool,
+        cost: int = 0,
+        description: str = "",
+        complexity: int = 0,
+        pDefend: int = 100,
+    ):
         super().__init__(label=label)
         self.implemented = implemented
         self.cost = cost
@@ -270,13 +275,15 @@ class Block(Node):
 # value: 'Perceived monetary value if applicable'
 # markings: 'Any specific markings for the data, like PII, SPI, HIPPA etc'
 class Discovery(Node):
-    def __init__(self,
-                 label: str,
-                 pSuccess: int = 100,
-                 description: str = "",
-                 sensitivity: int = 0,
-                 value: int = 0,
-                 markings: list = []):
+    def __init__(
+        self,
+        label: str,
+        pSuccess: int = 100,
+        description: str = "",
+        sensitivity: int = 0,
+        value: int = 0,
+        markings: list = [],
+    ):
         super().__init__(label=label)
         self.pSuccess = pSuccess
         self.description = description
