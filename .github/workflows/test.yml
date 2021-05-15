@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Install graphviz
-        run: sudo apt-get graphviz
+        run: sudo apt-get update && sudo apt-get install graphviz
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
