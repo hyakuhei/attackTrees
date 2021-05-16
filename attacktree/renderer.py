@@ -113,39 +113,40 @@ class Renderer(object):
 
         return style
 
-    def render(
-        self,
-        root: Node = None,
-        renderUnimplemented: bool = True,
-        style: dict = {},
-        fname: str = "attacktree-graph",
-        fout: str = "png",
-        renderOnExit=False,
+    def buildDot(
+        self, root: Node = None, includeUnimplemented: bool = True, style: dict = None
     ):
-        if root is not None:
-            self.root = root
-
-        if self.root is None:
-            # No graph to render
-            logging.error("No graph to render")
-            return
-
-        # TODO: move this out to a config:
+        if root is None:
+            return None
 
         # In case render is called multiple times, e.g jupyter
-        self.renderOnExit = renderOnExit
         dot = Digraph()
         dot.graph_attr["overlap"] = "false"
         dot.graph_attr["splines"] = "True"
         dot.graph_attr["nodesep"] = "0.2"
         dot.graph_attr["ranksep"] = "0.4"
 
-        if len(style) == 0:  # TODO: Make this a better check
+        if style is None:
             with resources.open_text("attacktree", "style.json") as fid:
                 style = json.load(fid)
 
         self._buildDot(
-            self.root, dot, dotformat=style, renderUnimplemented=renderUnimplemented
+            root, dot, dotformat=style, renderUnimplemented=includeUnimplemented
         )  # recursive call
+        return dot
+
+    def render(
+        self,
+        root: Node = None,
+        renderUnimplemented: bool = True,
+        style: dict = None,
+        fname: str = "attacktree-graph",
+        fout: str = "png",
+        renderOnExit=False,
+    ):
+        self.renderOnExit = renderOnExit
+        dot = self.buildDot(
+            root=root, includeUnimplemented=renderUnimplemented, style=style
+        )
         dot.format = fout
         dot.render(fname, view=True)
