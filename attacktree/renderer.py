@@ -144,7 +144,11 @@ class Renderer(object):
         fout: str = "png",
         renderOnExit=False,
     ):
+
         self.renderOnExit = renderOnExit
+        if root is None and self.root is not None:
+            root = self.root # sometimes we invoke as a context manager
+
         dot = self.buildDot(
             root=root, includeUnimplemented=renderUnimplemented, style=style
         )
