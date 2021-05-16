@@ -9,6 +9,10 @@ Programatically model trees like those described by [Kelly Shortridge](https://t
 
 The goal is to decouple the model from the view. In reality I'm removing the need for the user to understand Graphviz and introducing a need for them to understand python.
 
+## Jupyiter support (needs better documentation)
+If your system (or venv) has attacktree installed you can now build trees inside of Jupyter notebooks:
+![Screen shot of jupyter notebook with k8s attack tree](images/jupyter_k8s.png)
+
 Models differentiate between controls that are *imlemented* and those that are not; modelling both the current security posture, and a potential (improved) posture.
 
 The `renderer.render()` function can toggle whether to include unimplemented things in it's graph.
@@ -74,7 +78,6 @@ I imagine that in general usage, we'd just want one model for a specific attacke
 Below is the output of running the _complex example with `renderUnimplemented=True`, note that if you set this to `False` the generated graph looks the same as `examples/S3Simple.py.py`
 
 ![PNG image showing graph created by examples/S3Complex.py](images/example_complexS3.png?raw=true "Complex S3")
- 
 
 # Development
 
