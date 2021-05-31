@@ -4,8 +4,7 @@ from attacktree.models import Action, Block, Goal, Node
 # import some useful dicts
 from attacktree.models import rules
 
-
-# TODO: use logging framework
+import logging
 class Brain(object):
     def __init__(self):
         self.exploitChain = []
@@ -69,9 +68,10 @@ class Brain(object):
 
                 # This shouldn't happen and we should try to get rid of this check.
                 if edgeToThisNode is None:
-                    print(f"Could not find an edge to {node.label}")
-                    print(f"PrevNode: {prevNode.label}")
-                    print(f"Path: {path}\n")
+                    logging.error(f"""
+                        Could not find an edge to {node.label}
+                        PrevNode: {prevNode.label}
+                        Path: {path}""")
                 else:
                     edgeToThisNode.pSuccess = results["pSuccess"]
 
