@@ -4,6 +4,7 @@ from attacktree.models import (
     Detect,
     Discovery,
     Edge,
+    Node,
     Root,
     Goal,
     mitreAttack,
@@ -119,6 +120,62 @@ def basicTree():
 
     return root
 
+def test_blockShortcut():
+    root = Root("have rock")
+    goal = Goal("hit player")
+
+    throws = root.action("throw rock")
+    dodge = throws.block("dodge", implemented=True)
+
+    assert(len(throws.edges) == 1)
+    assert isinstance(throws.edges[0], Edge)
+    edge = throws.edges[0]
+
+    assert(edge.childNode == dodge)
+    assert(edge.parentNode == throws)
+
+    assert isinstance(dodge, Block)
+    assert isinstance(dodge, Node)
+    assert(len(dodge.parentEdges) == 1)
+    assert isinstance(dodge.parentEdges[0], Edge)
+
+def test_describe():
+    root = Root("root")
+    goal = Goal("goal")
+
+    throws = root.action("A")
+    dodge = throws.block("B", implemented=True)
+
+    description = throws.edges[0].describe()
+
+    assert(description == "Edge 'Fail' connects 'A' to 'B'")
+
+def test_repr():
+    root = Root("root")
+    goal = Goal("goal")
+
+    throws = root.action("A")
+    dodge = throws.block("B", implemented=True)
+
+    description = throws.edges[0].__repr__()
+
+    assert(description == "Edge 'Fail' connects 'A' to 'B'")
+
+
+def test_detectShortcut():
+    root = Root("have rock")
+    goal = Goal("hit player")
+
+    throws = root.action("throw rock")
+    alarm = throws.detect("player sees rock", implemented=True)
+
+    assert isinstance(alarm, Detect)
+    assert(len(throws.edges) == 1)
+    edge = throws.edges[0]
+
+    assert isinstance(edge, Edge)
+    assert edge.parentNode == throws
+    assert edge.childNode == alarm
 
 def test_buildTree(render=True):
     root = basicTree()

@@ -25,6 +25,8 @@ On MacOS this can be installed using `brew install graphviz`
 
 See https://graphviz.org/download/ for other options.
 
+Only python3.9 is supported at this time.
+
 # Installation
 attacktree is available in PyPI, we recommend installing in a virtualenv
 ```
