@@ -3,60 +3,67 @@
         "color":"#c0c2c0",
         "shape":"plaintext",
         "style":"filled, rounded",
-        "fontname":"Lato",
+        "fontname":"Arial",
         "margin":"0.2"
     },
     "Root":{
         "color":"#03fc9d",
         "shape":"box",
         "style":"filled, rounded",
-        "fontname":"Lato",
+        "fontname":"Arial",
         "margin":"0.2"
     },
     "Goal":{
         "color":"#03fc9d",
         "shape":"box",
         "style":"filled, rounded",
-        "fontname":"Lato",
+        "fontname":"Arial",
         "margin":"0.2"
     },
     "Action":{
         "color":"#ff5c5c",
         "shape":"plaintext",
         "style":"filled, rounded",
-        "fontname":"Lato",
+        "fontname":"Arial",
         "margin":"0.2"
     },
     "Discovery":{
         "color":"#ffdc5c",
         "shape":"box",
         "style":"filled, rounded",
-        "fontname":"Lato",
+        "fontname":"Arial",
         "margin":"0.2"
     },
     "Detect":{
         "color":"#ff7df0",
         "shape":"plaintext",
         "style":"filled, rounded",
-        "fontname":"Lato",
+        "fontname":"Arial",
         "margin":"0.2"
     },
     "Block":{
         "color":"#5cc1ff",
         "shape":"plaintext",
         "style":"filled, rounded",
-        "fontname":"Lato",
+        "fontname":"Arial",
         "margin":"0.2"
     },
     "_unimplemented_override":{
-        "style":"filled",
-        "color":"#b0c1cf"
+        "color":"#b0c1cf",
+        "shape":"plaintext",
+        "style":"filled, rounded",
+        "fontname":"Arial",
+        "margin":"0.2"
     },
     "Edge":{
-        "fontname":"Lato",
+        "fontname":"Arial",
         "color":"#1f1f1f"
     },
     "_unimplemented_edge":{
+        "color":"#919191",
+        "style":"dashed"
+    },
+    "defendedEdge":{
         "color":"#919191",
         "style":"dashed"
     }
