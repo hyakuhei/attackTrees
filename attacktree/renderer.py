@@ -22,71 +22,48 @@ class Renderer(object):
             self.render()
         return None
 
-    # A recursive function that walks the node tree
-    # And creates a graph for turning into graphviz
-    # TODO: Fix complexity PEP8 C901
+    # Addresses https://github.com/hyakuhei/attackTrees/issues/22
+    # will replace _buildDot()
     def _buildDot(
         self,
         node: Node,
         dot: Digraph,
-        renderUnimplemented: bool,
         mappedEdges: dict = {},
         dotformat: dict = {},
+        defendedPath: bool = False,
     ):
-        node_attr = None  # .dot formatting
-        unimplemented = False
+        node_attr = None
+        if node.__class__.__name__ in dotformat.keys():
+            node_attr = dotformat[node.__class__.__name__]
 
+        implemented = (
+            True  # common case, most things will be implemented, we default to that.
+        )
+        # TODO: Move this default logic elsewhere, maybe force it into the basic node?
         if hasattr(node, "implemented") and node.implemented is False:
-            unimplemented = True
-        # TODO fix this wierd inverted logic
-
-        # The node is marked as unimplemented and we are told not to render those nodes
-        if renderUnimplemented is False and unimplemented is True:
-            return
+            implemented = False
 
         if node.__class__.__name__ in dotformat.keys():
             node_attr = dotformat[node.__class__.__name__]
             # Overload the default formatting shape if the Node is flagged as unimplemented
-            if unimplemented:
-                # Style the unimplemented node
-                node_attr = node_attr | dotformat["_unimplemented_override"]
 
             nodeLabel = node.label
             if isinstance(node, (Action, Discovery)):
                 nodeLabel += f"\n{node.pSuccess}"
             if isinstance(node, (Block)):
                 nodeLabel += f"\n{node.pDefend}"
+                defendedPath = True
             dot.node(node.uniq, node.label, **node_attr)
         else:
             dot.node(node.uniq, node.label)
 
         for edge in node.getEdges():
-            # Make sure we don't draw a connection to an unimplemented node, if that renderUnimplemented is False
-
-            edgeImplemented = True  # default drawing style is to assume implemented
-
-            if isinstance(node, Block) and node.implemented is False:
-                edgeImplemented = False
-
-            if (
-                isinstance(edge.childNode, Block)
-                and edge.childNode.implemented is False
-            ):
-                edgeImplemented = False
-
-            # See if we should proceed with rendering the edge.
-            # If not, we actually don't need to follow this branch any further
-            # Short circuit the loop with a 'continue'
-            if renderUnimplemented is False and edgeImplemented is False:
-                continue
-
             # Setup default edge rendering style
-            edge_attr = dotformat["Edge"]
-
-            # Override style for unimplemented edge
-            if edgeImplemented is False:
-                # style the unimplemented edge
-                edge_attr = edge_attr | dotformat["_unimplemented_edge"]
+            # TODO: Decide if we are talking about "path" or "edge"
+            if defendedPath is True:
+                edge_attr = dotformat["defendedEdge"]
+            else:
+                edge_attr = dotformat["Edge"]
 
             label = edge.label
             if edge.pSuccess is not None and edge.pSuccess != -1:
@@ -101,11 +78,12 @@ class Renderer(object):
                 self._buildDot(
                     node=edge.childNode,
                     dot=dot,
-                    renderUnimplemented=renderUnimplemented,
                     mappedEdges=mappedEdges,
                     dotformat=dotformat,
+                    defendedPath=defendedPath
                 )  # recurse
 
+    
     def loadStyle(self, path: str):
         # TODO: Do error handling
         with open(path) as json_file:
@@ -130,27 +108,25 @@ class Renderer(object):
             with resources.open_text("attacktree", "style.json") as fid:
                 style = json.load(fid)
 
-        self._buildDot(
-            root, dot, dotformat=style, renderUnimplemented=includeUnimplemented
-        )  # recursive call
+        self._buildDot(root, dot, dotformat=style)  # recursive call
         return dot
 
     def render(
         self,
         root: Node = None,
-        renderUnimplemented: bool = True,
         style: dict = None,
         fname: str = "attacktree-graph",
         fout: str = "png",
         renderOnExit=False,
+        renderUnimplemented=False
     ):
-
+        logging.warning("renderUnimplemented is deprectaed")
         self.renderOnExit = renderOnExit
         if root is None and self.root is not None:
-            root = self.root # sometimes we invoke as a context manager
+            root = self.root  # sometimes we invoke as a context manager
 
         dot = self.buildDot(
-            root=root, includeUnimplemented=renderUnimplemented, style=style
+            root=root, style=style
         )
         dot.format = fout
         dot.render(fname, view=True)
