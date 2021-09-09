@@ -17,6 +17,7 @@ import pytest
 import logging
 import inspect
 
+
 def basicTree():
     root = Root("Root")
     goal = Goal("Systems Access")
@@ -114,12 +115,9 @@ def basicTree():
 
     return root
 
+
 def test_contextManager(render=False):
     with Renderer(root="Reality", goal="Attacker gets data from bucket") as graph:
         pwd = graph.root.action("Use password")
         block = pwd.block("Block", implemented=False)
         block.connectTo(graph.goal)
-        
-
-
-

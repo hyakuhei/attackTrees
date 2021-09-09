@@ -1,0 +1,6 @@
+digraph {
+	graph [nodesep=0.2 overlap=false ranksep=0.4 splines=True]
+	"844673a674d044e399b6e7fd764b0146" [label=Internet color="#03fc9d" fontname=Lato margin=0.2 shape=box style="filled, rounded"]
+	"844673a674d044e399b6e7fd764b0146" -> "5d7865a3aac1420299eda2e7175978f7" [label=Next color="#1f1f1f" fontname=Lato]
+	"5d7865a3aac1420299eda2e7175978f7" [label="RCE in application" color="#ff5c5c" fontname=Lato margin=0.2 shape=plaintext style="filled, rounded"]
+}

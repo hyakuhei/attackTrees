@@ -143,6 +143,10 @@ class Node(object):
         self.connectTo(d, edge_label)
         return d
 
+    # I always get discover and discovery mixed up so added a shortcut
+    def discover(self, label: str, edge_label: str = "Learn"):
+        return self.discovery(label,edge_label)
+
     def __repr__(self):
         return f"{self.__class__.__name__}:{id(self)}"
 
@@ -265,8 +269,10 @@ class Block(Node):
             self.connectTo(b)
 
             # a.metadata['pSuccess'] == the probability of the technique working
-            # block.metadata['pDefend'] == the probability of the techniuqe being subsequently blocked
+            # block.metadata['pDefend'] == the probability of the technique being subsequently blocked
             # edge.pSuccess is the probability of progressing
+
+        return self  # fluent_pattern
 
 
 # label: 'The name of the node'
