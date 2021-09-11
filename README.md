@@ -9,7 +9,7 @@ Programatically model trees like those described by [Kelly Shortridge](https://t
 
 The goal is to decouple the model from the view. In reality I'm removing the need for the user to understand Graphviz and introducing a need for them to understand python.
 
-## Jupyiter support (needs better documentation)
+## Jupyter support (needs better documentation)
 If your system (or venv) has attacktree installed you can now build trees inside of Jupyter notebooks:
 ![Screen shot of jupyter notebook with k8s attack tree](images/jupyter_k8s.png)
 
